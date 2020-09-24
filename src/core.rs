@@ -16,11 +16,11 @@ pub fn print_minimap(reader: Box<dyn BufRead>, opt: &Opt) -> io::Result<()> {
         .chunks(4)
     {
         for (i, (_, group)) in chunk.enumerate() {
-            let (mut beg, mut end) = (0, 0);
+            let (mut beg, mut end) = (usize::max_value(), 0);
             for (_, line) in group {
                 let line: String = line?;
-                beg = cmp::min(beg, line.find(|c: char| !c.is_whitespace()).unwrap_or(0));
-                end = cmp::max(end, line.rfind(|c: char| !c.is_whitespace()).unwrap_or(line.len()));
+                beg = cmp::min(beg, line.find(|c: char| !c.is_whitespace()).unwrap_or(beg));
+                end = cmp::max(end, line.rfind(|c: char| !c.is_whitespace()).unwrap_or(end));
             }
             frame[i] = beg..=end;
         }
