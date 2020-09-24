@@ -28,7 +28,7 @@ fn main() -> io::Result<()> {
             }
             braille[i] = beg..=end;
         }
-        braille = adjust_width(&braille, h_scale);
+        adjust_width(&mut braille, h_scale);
         print_braille(&braille);
     }
     Ok(())
@@ -36,12 +36,11 @@ fn main() -> io::Result<()> {
 
 fn print_braille(matrix: &Vec<RangeInclusive<usize>>) {
     let end = matrix.iter().max_by_key(|range| range.end()).unwrap().end();
-    for i in (0..=*end).step_by(2) {
-        let idx1 = char_idx(matrix, i);
-        let idx2 = char_idx(matrix, i + 1) << 4;
-        print!("{}", BRAILLE_MATRIX[idx1 + idx2]);
-    }
-    println!();
+    let line: String = (0..=*end)
+        .step_by(2)
+        .map(|i| BRAILLE_MATRIX[(char_idx(matrix, i)) + (char_idx(matrix, i + 1) << 4)])
+        .collect();
+    println!("{}", line);
 }
 
 fn char_idx(matrix: &Vec<RangeInclusive<usize>>, pos: usize) -> usize {
@@ -51,11 +50,10 @@ fn char_idx(matrix: &Vec<RangeInclusive<usize>>, pos: usize) -> usize {
         .fold(0, |acc, (i, x)| if x.contains(&pos) { acc + (1 << i) } else { acc })
 }
 
-fn adjust_width(matrix: &Vec<RangeInclusive<usize>>, factor: f64) -> Vec<RangeInclusive<usize>> {
-    matrix
-        .iter()
-        .map(|x| RangeInclusive::new(scale(*x.start(), factor), scale(*x.end(), factor)))
-        .collect()
+fn adjust_width(matrix: &mut Vec<RangeInclusive<usize>>, factor: f64) {
+    for x in matrix.iter_mut() {
+        *x = RangeInclusive::new(scale(*x.start(), factor), scale(*x.end(), factor));
+    }
 }
 
 fn scale(x: usize, factor: f64) -> usize {
