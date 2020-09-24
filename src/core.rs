@@ -24,13 +24,13 @@ pub fn print_minimap(reader: Box<dyn BufRead>, opt: &Opt) -> io::Result<()> {
             }
             frame[i] = beg..=end;
         }
-        scale_width(&mut frame, hscale);
-        print_miniline(&frame);
+        scale_frame(&mut frame, hscale);
+        print_frame(&frame);
     }
     Ok(())
 }
 
-fn print_miniline(frame: &Vec<RangeInclusive<usize>>) {
+fn print_frame(frame: &Vec<RangeInclusive<usize>>) {
     let idx = |pos| {
         frame
             .iter()
@@ -45,7 +45,7 @@ fn print_miniline(frame: &Vec<RangeInclusive<usize>>) {
     println!("{}", line);
 }
 
-fn scale_width(frame: &mut Vec<RangeInclusive<usize>>, factor: f64) {
+fn scale_frame(frame: &mut Vec<RangeInclusive<usize>>, factor: f64) {
     for x in frame.iter_mut() {
         *x = RangeInclusive::new(scale(*x.start(), factor), scale(*x.end(), factor));
     }
