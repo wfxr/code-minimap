@@ -1,0 +1,80 @@
+#compdef code-minimap
+
+autoload -U is-at-least
+
+_code-minimap() {
+    typeset -A opt_args
+    typeset -a _arguments_options
+    local ret=1
+
+    if is-at-least 5.2; then
+        _arguments_options=(-s -S -C)
+    else
+        _arguments_options=(-s -C)
+    fi
+
+    local context curcontext="$curcontext" state line
+    _arguments "${_arguments_options[@]}" \
+'-H+[Specify horizontal scale factor]' \
+'--horizontal-scale=[Specify horizontal scale factor]' \
+'-V+[Specify vertical scale factor]' \
+'--vertical-scale=[Specify vertical scale factor]' \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'--version[Prints version information]' \
+'::FILE -- File to read:_files' \
+":: :_code-minimap_commands" \
+"*::: :->code-minimap" \
+&& ret=0
+    case $state in
+    (code-minimap)
+        words=($line[2] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:code-minimap-command-$line[2]:"
+        case $line[2] in
+            (completion)
+_arguments "${_arguments_options[@]}" \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+':shell -- Target shell name:(zsh bash fish powershell elvish)' \
+&& ret=0
+;;
+(help)
+_arguments "${_arguments_options[@]}" \
+'-h[Prints help information]' \
+'--help[Prints help information]' \
+'-V[Prints version information]' \
+'--version[Prints version information]' \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+}
+
+(( $+functions[_code-minimap_commands] )) ||
+_code-minimap_commands() {
+    local commands; commands=(
+        "completion:Generate shell completion file" \
+"help:Prints this message or the help of the given subcommand(s)" \
+    )
+    _describe -t commands 'code-minimap commands' commands "$@"
+}
+(( $+functions[_code-minimap__completion_commands] )) ||
+_code-minimap__completion_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'code-minimap completion commands' commands "$@"
+}
+(( $+functions[_code-minimap__help_commands] )) ||
+_code-minimap__help_commands() {
+    local commands; commands=(
+        
+    )
+    _describe -t commands 'code-minimap help commands' commands "$@"
+}
+
+_code-minimap "$@"
