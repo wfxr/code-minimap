@@ -5,8 +5,7 @@ use std::io::{self, BufRead};
 use std::ops::RangeInclusive;
 
 pub fn print_minimap(reader: Box<dyn BufRead>, opt: &Opt) -> io::Result<()> {
-    let hscale = opt.hscale;
-    let vscale = opt.vscale;
+    let (hscale, vscale) = (opt.hscale, opt.vscale);
     let mut frame = vec![0..=0; 4];
     for chunk in &reader
         .lines()
@@ -32,19 +31,18 @@ pub fn print_minimap(reader: Box<dyn BufRead>, opt: &Opt) -> io::Result<()> {
 }
 
 fn print_miniline(frame: &Vec<RangeInclusive<usize>>) {
+    let idx = |pos| {
+        frame
+            .iter()
+            .enumerate()
+            .fold(0, |acc, (i, x)| if x.contains(&pos) { acc + (1 << i) } else { acc })
+    };
     let end = frame.iter().max_by_key(|range| range.end()).unwrap().end();
     let line: String = (0..=*end)
         .step_by(2)
-        .map(|i| BRAILLE_MATRIX[(char_idx(frame, i)) + (char_idx(frame, i + 1) << 4)])
+        .map(|i| BRAILLE_MATRIX[(idx(i)) + (idx(i + 1) << 4)])
         .collect();
     println!("{}", line);
-}
-
-fn char_idx(frame: &Vec<RangeInclusive<usize>>, pos: usize) -> usize {
-    frame
-        .iter()
-        .enumerate()
-        .fold(0, |acc, (i, x)| if x.contains(&pos) { acc + (1 << i) } else { acc })
 }
 
 fn scale_width(frame: &mut Vec<RangeInclusive<usize>>, factor: f64) {
