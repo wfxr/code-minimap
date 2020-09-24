@@ -52,7 +52,7 @@ fn scale_frame(frame: &mut Vec<RangeInclusive<usize>>, factor: f64) {
 }
 
 fn scale(x: usize, factor: f64) -> usize {
-    (x as f64 * factor).round() as usize
+    (x as f64 * factor) as usize
 }
 
 #[cfg_attr(rustfmt, rustfmt_skip)]
