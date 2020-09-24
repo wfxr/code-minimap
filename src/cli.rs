@@ -14,11 +14,11 @@ pub struct Opt {
     pub file: Option<PathBuf>,
 
     /// Specify horizontal scale factor
-    #[structopt(short = "h", long = "horizontal-scale", default_value = "1.0")]
+    #[structopt(short = "H", long = "horizontal-scale", default_value = "1.0")]
     pub hscale: f64,
 
     /// Specify vertical scale factor
-    #[structopt(short = "v", long = "vertical-scale", default_value = "1.0")]
+    #[structopt(short = "V", long = "vertical-scale", default_value = "1.0")]
     pub vscale: f64,
 
     /// Subcommand
