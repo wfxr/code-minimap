@@ -119,6 +119,16 @@ Benchmark #1: code-minimap huge.txt
 ```
  **10,000,000** lines, **735M** size, **2.9s**.
 
+---------------------------------
+
+*Test environment:*
+
+```
+Binary version: 0.3.0
+OS: Arch Linux x86_64
+Kernel: Kernel: 5.8.10-arch1-1
+CPU: Intel i9-9900K (16) @ 5.000GHz
+```
 
 ### Related Project
 
