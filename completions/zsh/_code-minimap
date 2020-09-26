@@ -19,6 +19,7 @@ _code-minimap() {
 '--horizontal-scale=[Specify horizontal scale factor]' \
 '-V+[Specify vertical scale factor]' \
 '--vertical-scale=[Specify vertical scale factor]' \
+'--padding=[Specify padding width]' \
 '-h[Prints help information]' \
 '--help[Prints help information]' \
 '--version[Prints version information]' \

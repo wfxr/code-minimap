@@ -19,6 +19,7 @@ edit:completion:arg-completer[code-minimap] = [@words]{
             cand --horizontal-scale 'Specify horizontal scale factor'
             cand -V 'Specify vertical scale factor'
             cand --vertical-scale 'Specify vertical scale factor'
+            cand --padding 'Specify padding width'
             cand -h 'Prints help information'
             cand --help 'Prints help information'
             cand --version 'Prints version information'

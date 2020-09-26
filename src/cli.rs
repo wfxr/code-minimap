@@ -21,6 +21,10 @@ pub struct Opt {
     #[structopt(short = "V", long = "vertical-scale", default_value = "1.0")]
     pub vscale: f64,
 
+    /// Specify padding width
+    #[structopt(long = "padding")]
+    pub padding: Option<usize>,
+
     /// Subcommand
     #[structopt(subcommand)]
     pub subcommand: Option<Subcommand>,

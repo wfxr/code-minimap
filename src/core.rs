@@ -25,12 +25,12 @@ pub fn print_minimap(reader: Box<dyn BufRead>, opt: &Opt) -> io::Result<()> {
             frame[i] = beg..=end;
         }
         scale_frame(&mut frame, hscale);
-        print_frame(&frame);
+        print_frame(&frame, opt.padding);
     }
     Ok(())
 }
 
-fn print_frame(frame: &Vec<RangeInclusive<usize>>) {
+fn print_frame(frame: &Vec<RangeInclusive<usize>>, padding: Option<usize>) {
     let idx = |pos| {
         frame
             .iter()
@@ -42,7 +42,10 @@ fn print_frame(frame: &Vec<RangeInclusive<usize>>) {
         .step_by(2)
         .map(|i| BRAILLE_MATRIX[(idx(i)) + (idx(i + 1) << 4)])
         .collect();
-    println!("{}", line);
+    match padding {
+        Some(padding) => println!("{0:<1$}", line, padding),
+        None => println!("{}", line),
+    }
 }
 
 fn scale_frame(frame: &mut Vec<RangeInclusive<usize>>, factor: f64) {

@@ -26,7 +26,7 @@ _code-minimap() {
 
     case "${cmd}" in
         code-minimap)
-            opts=" -h -H -V  --help --version --horizontal-scale --vertical-scale  <FILE>  completion help"
+            opts=" -h -H -V  --help --version --horizontal-scale --vertical-scale --padding  <FILE>  completion help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -46,6 +46,10 @@ _code-minimap() {
                     return 0
                     ;;
                     -V)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --padding)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
