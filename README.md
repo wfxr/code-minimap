@@ -102,9 +102,9 @@ Benchmark #1: code-minimap src/core.rs
 - [all rust code from rust-1.46.0](https://github.com/rust-lang/rust/archive/1.46.0.tar.gz):
 
 ```
-$ fd -t f -e rs -x cat "{}" >> /tmp/one-in-all.rs
-$ hyperfine -w 10 'code-minimap /tmp/one-in-all.rs'
-Benchmark #1: code-minimap /tmp/one-in-all.rs
+$ fd -t f -e rs -x cat "{}" >> /tmp/all-in-one.rs
+$ hyperfine -w 10 'code-minimap /tmp/all-in-one.rs'
+Benchmark #1: code-minimap /tmp/all-in-one.rs
   Time (mean ± σ):     322.7 ms ±   4.5 ms    [User: 298.7 ms, System: 23.8 ms]
   Range (min … max):   318.5 ms … 334.1 ms    10 runs
 ```
@@ -130,7 +130,7 @@ Benchmark #1: code-minimap huge.txt
 ```
 Binary version: 0.3.0
 OS: Arch Linux x86_64
-Kernel: Kernel: 5.8.10-arch1-1
+Kernel: 5.8.10-arch1-1
 CPU: Intel i9-9900K (16) @ 5.000GHz
 ```
 
