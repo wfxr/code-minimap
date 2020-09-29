@@ -2,11 +2,11 @@ use crate::cli::Opt;
 use itertools::Itertools;
 use std::cmp;
 use std::io::{self, BufRead};
-use std::ops::RangeInclusive;
+use std::ops::Range;
 
 pub fn print_minimap(reader: Box<dyn BufRead>, opt: &Opt) -> io::Result<()> {
     let (hscale, vscale) = (opt.hscale, opt.vscale);
-    let mut frame = vec![0..=0; 4];
+    let mut frame = vec![0..0; 4];
     for chunk in &reader
         .lines()
         .enumerate()
@@ -15,6 +15,7 @@ pub fn print_minimap(reader: Box<dyn BufRead>, opt: &Opt) -> io::Result<()> {
         .into_iter()
         .chunks(4)
     {
+        let mut chunk_size = 0;
         for (i, (_, group)) in chunk.enumerate() {
             let (mut beg, mut end) = (usize::max_value(), 0);
             for (_, line) in group {
@@ -22,7 +23,11 @@ pub fn print_minimap(reader: Box<dyn BufRead>, opt: &Opt) -> io::Result<()> {
                 beg = cmp::min(beg, line.find(|c: char| !c.is_whitespace()).unwrap_or(beg));
                 end = cmp::max(end, line.rfind(|c: char| !c.is_whitespace()).unwrap_or(end));
             }
-            frame[i] = beg..=end;
+            frame[i] = beg..(end + 1);
+            chunk_size += 1;
+        }
+        for i in chunk_size..4 {
+            frame[i] = 0..0;
         }
         scale_frame(&mut frame, hscale);
         print_frame(&frame, opt.padding);
@@ -30,15 +35,15 @@ pub fn print_minimap(reader: Box<dyn BufRead>, opt: &Opt) -> io::Result<()> {
     Ok(())
 }
 
-fn print_frame(frame: &Vec<RangeInclusive<usize>>, padding: Option<usize>) {
+fn print_frame(frame: &Vec<Range<usize>>, padding: Option<usize>) {
     let idx = |pos| {
         frame
             .iter()
             .enumerate()
             .fold(0, |acc, (i, x)| if x.contains(&pos) { acc + (1 << i) } else { acc })
     };
-    let end = frame.iter().max_by_key(|range| range.end()).unwrap().end();
-    let line: String = (0..=*end)
+    let end = frame.iter().max_by_key(|range| range.end).unwrap().end;
+    let line: String = (0..end)
         .step_by(2)
         .map(|i| BRAILLE_MATRIX[(idx(i)) + (idx(i + 1) << 4)])
         .collect();
@@ -48,9 +53,9 @@ fn print_frame(frame: &Vec<RangeInclusive<usize>>, padding: Option<usize>) {
     }
 }
 
-fn scale_frame(frame: &mut Vec<RangeInclusive<usize>>, factor: f64) {
+fn scale_frame(frame: &mut Vec<Range<usize>>, factor: f64) {
     for x in frame.iter_mut() {
-        *x = RangeInclusive::new(scale(*x.start(), factor), scale(*x.end(), factor));
+        *x = scale(x.start, factor)..scale(x.end, factor);
     }
 }
 
