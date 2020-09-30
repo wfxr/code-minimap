@@ -3,7 +3,7 @@ use std::path::Path;
 use std::str::FromStr;
 use structopt::clap::Shell;
 
-include!("src/cli.rs");
+include!("src/bin/code-minimap/cli.rs");
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let outdir = std::env::var_os("SHELL_COMPLETIONS_DIR")

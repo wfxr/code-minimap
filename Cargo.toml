@@ -17,6 +17,14 @@ repository = "https://github.com/wfxr/code-minimap"
 edition = "2018"
 build = "build.rs"
 
+[lib]
+name = "code_minimap"
+path = "src/lib.rs"
+
+[[bin]]
+name = "code_minimap"
+path = "src/bin/code-minimap/main.rs"
+
 [target.'cfg(target_family = "unix")'.dependencies]
 nix = "0.18"
 

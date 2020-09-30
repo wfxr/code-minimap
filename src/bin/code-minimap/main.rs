@@ -1,7 +1,7 @@
 mod cli;
 mod util;
 use cli::{CompletionOpt, Opt, StructOpt, Subcommand};
-use code_minimap::print_minimap;
+use code_minimap::{print_minimap, Opt as MinimapOpt};
 use std::fs::File;
 use std::io::{self, BufRead, BufReader};
 
@@ -17,7 +17,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 Some(path) => Box::new(BufReader::new(File::open(path)?)),
                 None => Box::new(BufReader::new(io::stdin())),
             };
-            print_minimap(reader, &opt.into()).unwrap();
+            let minimap_opt = MinimapOpt {
+                file:    opt.file,
+                hscale:  opt.hscale,
+                vscale:  opt.vscale,
+                padding: opt.padding,
+            };
+            print_minimap(reader, &minimap_opt).unwrap();
         }
     }
     Ok(())
