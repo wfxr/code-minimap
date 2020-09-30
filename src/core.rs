@@ -42,16 +42,14 @@ pub fn print_minimap(reader: Box<dyn BufRead>, opt: &Opt) -> io::Result<()> {
             frame[i] = beg..(end + 1);
             chunk_size += 1;
         }
-        for i in chunk_size..4 {
-            frame[i] = 0..0;
-        }
+        frame.iter_mut().skip(chunk_size).for_each(|row| *row = 0..0);
         scale_frame(&mut frame, hscale);
         print_frame(&frame, opt.padding);
     }
     Ok(())
 }
 
-fn print_frame(frame: &Vec<Range<usize>>, padding: Option<usize>) {
+fn print_frame(frame: &[Range<usize>], padding: Option<usize>) {
     let idx = |pos| {
         frame
             .iter()
@@ -69,7 +67,7 @@ fn print_frame(frame: &Vec<Range<usize>>, padding: Option<usize>) {
     }
 }
 
-fn scale_frame(frame: &mut Vec<Range<usize>>, factor: f64) {
+fn scale_frame(frame: &mut [Range<usize>], factor: f64) {
     for x in frame.iter_mut() {
         *x = scale(x.start, factor)..scale(x.end, factor);
     }
@@ -79,7 +77,7 @@ fn scale(x: usize, factor: f64) -> usize {
     (x as f64 * factor) as usize
 }
 
-#[cfg_attr(rustfmt, rustfmt_skip)]
+#[rustfmt::skip]
 const BRAILLE_MATRIX : [char; 256] = [
     '⠀', '⠁', '⠂', '⠃', '⠄', '⠅', '⠆', '⠇', '⡀', '⡁', '⡂', '⡃', '⡄', '⡅', '⡆', '⡇',
     '⠈', '⠉', '⠊', '⠋', '⠌', '⠍', '⠎', '⠏', '⡈', '⡉', '⡊', '⡋', '⡌', '⡍', '⡎', '⡏',
