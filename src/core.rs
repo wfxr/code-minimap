@@ -2,26 +2,9 @@ use itertools::Itertools;
 use std::cmp;
 use std::io::{self, BufRead};
 use std::ops::Range;
-use std::path::PathBuf;
-
-/// Options for printing minimap
-pub struct Opt {
-    /// File path to read
-    pub file: Option<PathBuf>,
-
-    /// horizontal scale factor
-    pub hscale: f64,
-
-    /// vertical scale factor
-    pub vscale: f64,
-
-    /// padding width
-    pub padding: Option<usize>,
-}
 
 /// Print the minimap to stdout
-pub fn print_minimap(reader: Box<dyn BufRead>, opt: &Opt) -> io::Result<()> {
-    let (hscale, vscale) = (opt.hscale, opt.vscale);
+pub fn print(reader: Box<dyn BufRead>, hscale: f64, vscale: f64, padding: Option<usize>) -> io::Result<()> {
     let mut frame = vec![0..0; 4];
     for chunk in &reader
         .lines()
@@ -44,7 +27,7 @@ pub fn print_minimap(reader: Box<dyn BufRead>, opt: &Opt) -> io::Result<()> {
         }
         frame.iter_mut().skip(chunk_size).for_each(|row| *row = 0..0);
         scale_frame(&mut frame, hscale);
-        print_frame(&frame, opt.padding);
+        print_frame(&frame, padding);
     }
     Ok(())
 }
