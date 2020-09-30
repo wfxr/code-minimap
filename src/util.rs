@@ -1,5 +1,5 @@
 use crate::cli::Opt as CliOpt;
-use code_minimap::core::Opt;
+use code_minimap::Opt;
 
 /// This should be called before calling any cli method or printing any output.
 pub(crate) fn reset_signal_pipe_handler() {

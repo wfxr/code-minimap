@@ -1,7 +1,7 @@
 mod cli;
 mod util;
 use cli::{CompletionOpt, Opt, StructOpt, Subcommand};
-use code_minimap::core::print_minimap;
+use code_minimap::print_minimap;
 use std::fs::File;
 use std::io::{self, BufRead, BufReader};
 
