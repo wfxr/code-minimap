@@ -1,7 +1,7 @@
 mod cli;
-mod core;
 mod util;
 use cli::{CompletionOpt, Opt, StructOpt, Subcommand};
+use code_minimap::core::print_minimap;
 use std::fs::File;
 use std::io::{self, BufRead, BufReader};
 
@@ -17,7 +17,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 Some(path) => Box::new(BufReader::new(File::open(path)?)),
                 None => Box::new(BufReader::new(io::stdin())),
             };
-            core::print_minimap(reader, &opt).unwrap();
+            print_minimap(reader, &opt.into()).unwrap();
         }
     }
     Ok(())

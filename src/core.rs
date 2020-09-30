@@ -1,9 +1,25 @@
-use crate::cli::Opt;
 use itertools::Itertools;
 use std::cmp;
 use std::io::{self, BufRead};
 use std::ops::Range;
+use std::path::PathBuf;
 
+/// Options for printing minimap
+pub struct Opt {
+    /// File path to read
+    pub file: Option<PathBuf>,
+
+    /// horizontal scale factor
+    pub hscale: f64,
+
+    /// vertical scale factor
+    pub vscale: f64,
+
+    /// padding width
+    pub padding: Option<usize>,
+}
+
+/// Print the minimap to stdout
 pub fn print_minimap(reader: Box<dyn BufRead>, opt: &Opt) -> io::Result<()> {
     let (hscale, vscale) = (opt.hscale, opt.vscale);
     let mut frame = vec![0..0; 4];
