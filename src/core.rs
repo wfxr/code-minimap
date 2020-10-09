@@ -1,10 +1,19 @@
 use itertools::Itertools;
+use std::cell::RefCell;
 use std::cmp;
-use std::io::{self, BufRead};
+use std::io::{self, BufRead, Write};
 use std::ops::Range;
+use std::rc::Rc;
+use std::vec::Vec;
 
-/// Print the minimap to stdout
-pub fn print(reader: Box<dyn BufRead>, hscale: f64, vscale: f64, padding: Option<usize>) -> io::Result<()> {
+/// Write minimap to output
+pub fn write(
+    output: Rc<RefCell<dyn Write>>,
+    reader: Box<dyn BufRead>,
+    hscale: f64,
+    vscale: f64,
+    padding: Option<usize>,
+) -> io::Result<()> {
     let mut frame = vec![0..0; 4];
     for chunk in &reader
         .lines()
@@ -27,12 +36,55 @@ pub fn print(reader: Box<dyn BufRead>, hscale: f64, vscale: f64, padding: Option
         }
         frame.iter_mut().skip(chunk_size).for_each(|row| *row = 0..0);
         scale_frame(&mut frame, hscale);
-        print_frame(&frame, padding);
+        write_frame(output.clone(), &frame, padding)?;
     }
     Ok(())
 }
 
-fn print_frame(frame: &[Range<usize>], padding: Option<usize>) {
+/// Print minimap to stdout
+///
+/// # Examples
+///
+/// Basic usage:
+///
+/// ```
+/// use std::io;
+/// use std::io::BufReader;
+///
+/// let reader = Box::new(BufReader::new(io::stdin()));
+/// code_minimap::print(reader, 1.0, 1.0, None).unwrap();
+/// ```
+pub fn print(reader: Box<dyn BufRead>, hscale: f64, vscale: f64, padding: Option<usize>) -> io::Result<()> {
+    write(Rc::new(RefCell::new(io::stdout())), reader, hscale, vscale, padding)
+}
+
+/// Write minimap to string
+///
+/// # Examples
+///
+/// Basic usage:
+///
+/// ```
+/// use std::io;
+/// use std::io::BufReader;
+///
+/// let reader = Box::new(BufReader::new(io::stdin()));
+/// let s = code_minimap::write_to_string(reader, 1.0, 1.0, None).unwrap();
+/// print!("{}", s);
+/// ```
+pub fn write_to_string(
+    reader: Box<dyn BufRead>,
+    hscale: f64,
+    vscale: f64,
+    padding: Option<usize>,
+) -> io::Result<String> {
+    let buf = Rc::new(RefCell::new(Vec::new()));
+    write(buf.clone(), reader, hscale, vscale, padding)?;
+    let buf = Rc::try_unwrap(buf).unwrap().into_inner();
+    Ok(String::from_utf8(buf).unwrap())
+}
+
+fn write_frame(output: Rc<RefCell<dyn Write>>, frame: &[Range<usize>], padding: Option<usize>) -> std::io::Result<()> {
     let idx = |pos| {
         frame
             .iter()
@@ -45,8 +97,8 @@ fn print_frame(frame: &[Range<usize>], padding: Option<usize>) {
         .map(|i| BRAILLE_MATRIX[(idx(i)) + (idx(i + 1) << 4)])
         .collect();
     match padding {
-        Some(padding) => println!("{0:<1$}", line, padding),
-        None => println!("{}", line),
+        Some(padding) => writeln!(output.borrow_mut(), "{0:<1$}", line, padding),
+        None => writeln!(output.borrow_mut(), "{}", line),
     }
 }
 
