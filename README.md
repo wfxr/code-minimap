@@ -17,7 +17,7 @@
 </p>
 
 This tool is for generating text minimaps at 🚀 speed.
-You can use it to implement IDE-like minimap plugin for the terminal text editor,
+You can use it to implement IDE-like minimap plugin for a terminal text editor,
 [minimap.vim](https://github.com/wfxr/minimap.vim) for example.
 
 ### Features
