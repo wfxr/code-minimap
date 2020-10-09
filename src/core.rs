@@ -131,3 +131,23 @@ const BRAILLE_MATRIX : [char; 256] = [
     '⢰', '⢱', '⢲', '⢳', '⢴', '⢵', '⢶', '⢷', '⣰', '⣱', '⣲', '⣳', '⣴', '⣵', '⣶', '⣷',
     '⢸', '⢹', '⢺', '⢻', '⢼', '⢽', '⢾', '⢿', '⣸', '⣹', '⣺', '⣻', '⣼', '⣽', '⣾', '⣿',
 ];
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use rstest::*;
+
+    #[rstest(
+        input,
+        expected,
+        case("", ""),
+        case("a", "⠁"),
+        case("aaaa\nbbbb\ncccc\ndddd", "⣿⣿"),
+        case("aaa\n aa\n  a\n   a", "⠙⢇"),
+        case("  a  b c\n d efg  \n    h  i\n jk", "⢐⡛⠿⠭")
+    )]
+    fn test_write_to_string(input: &'static str, expected: &str) {
+        let actual = write_to_string(Box::new(input.as_bytes()), 1.0, 1.0, None).unwrap();
+        assert_eq!(expected, actual.trim());
+    }
+}
