@@ -16,7 +16,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 Some(path) => Box::new(BufReader::new(File::open(path)?)),
                 None => Box::new(BufReader::new(io::stdin())),
             };
-            code_minimap::print(reader, opt.hscale, opt.vscale, opt.padding).unwrap();
+            code_minimap::print(
+                reader,
+                opt.start_line,
+                opt.end_line,
+                opt.hscale,
+                opt.vscale,
+                opt.padding,
+            )
+            .unwrap();
         }
     }
     Ok(())

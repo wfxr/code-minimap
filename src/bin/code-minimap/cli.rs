@@ -13,6 +13,14 @@ pub struct Opt {
     #[structopt(name = "FILE")]
     pub file: Option<PathBuf>,
 
+    /// Specify start line, inclusive
+    #[structopt(short = "S", long = "start-line")]
+    pub start_line: Option<usize>,
+
+    /// Specify end line, inclusive
+    #[structopt(short = "E", long = "end-line")]
+    pub end_line: Option<usize>,
+
     /// Specify horizontal scale factor
     #[structopt(short = "H", long = "horizontal-scale", default_value = "1.0")]
     pub hscale: f64,

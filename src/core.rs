@@ -10,14 +10,24 @@ use std::vec::Vec;
 pub fn write(
     output: Rc<RefCell<dyn Write>>,
     reader: Box<dyn BufRead>,
+    start_line: Option<usize>,
+    end_line: Option<usize>,
     hscale: f64,
     vscale: f64,
     padding: Option<usize>,
 ) -> io::Result<()> {
     let mut frame = vec![0..0; 4];
-    for chunk in &reader
-        .lines()
-        .enumerate()
+
+    let start = start_line.map(|s| cmp::max(s, 1)).unwrap_or(1);
+    let lines = reader.lines().skip(start - 1);
+    let lines: Box<dyn Iterator<Item=Result<String, io::Error>>> = if let Some(end) = end_line {
+        let take = if end >= start { end - start + 1 } else { 0 };
+        Box::new(lines.take(take))
+    } else {
+        Box::new(lines)
+    };
+
+    for chunk in &lines.enumerate()
         .map(|(i, line)| (scale(i, vscale), line))
         .group_by(|(i, _)| *i)
         .into_iter()
@@ -52,10 +62,10 @@ pub fn write(
 /// use std::io::BufReader;
 ///
 /// let reader = Box::new(BufReader::new(io::stdin()));
-/// code_minimap::print(reader, 1.0, 1.0, None).unwrap();
+/// code_minimap::print(reader, None, None, 1.0, 1.0, None).unwrap();
 /// ```
-pub fn print(reader: Box<dyn BufRead>, hscale: f64, vscale: f64, padding: Option<usize>) -> io::Result<()> {
-    write(Rc::new(RefCell::new(io::stdout())), reader, hscale, vscale, padding)
+pub fn print(reader: Box<dyn BufRead>, start_line: Option<usize>, end_line: Option<usize>, hscale: f64, vscale: f64, padding: Option<usize>) -> io::Result<()> {
+    write(Rc::new(RefCell::new(io::stdout())), reader, start_line, end_line, hscale, vscale, padding)
 }
 
 /// Write minimap to string
@@ -74,12 +84,14 @@ pub fn print(reader: Box<dyn BufRead>, hscale: f64, vscale: f64, padding: Option
 /// ```
 pub fn write_to_string(
     reader: Box<dyn BufRead>,
+    start_line: Option<usize>,
+    end_line: Option<usize>,
     hscale: f64,
     vscale: f64,
     padding: Option<usize>,
 ) -> io::Result<String> {
     let buf = Rc::new(RefCell::new(Vec::new()));
-    write(buf.clone(), reader, hscale, vscale, padding)?;
+    write(buf.clone(), reader, start_line, end_line, hscale, vscale, padding)?;
     let buf = Rc::try_unwrap(buf).unwrap().into_inner();
     Ok(String::from_utf8(buf).unwrap())
 }
@@ -147,7 +159,7 @@ mod test {
         case("  a  b c\n d efg  \n    h  i\n jk", "⢐⡛⠿⠭")
     )]
     fn test_write_to_string(input: &'static str, expected: &str) {
-        let actual = write_to_string(Box::new(input.as_bytes()), 1.0, 1.0, None).unwrap();
+        let actual = write_to_string(Box::new(input.as_bytes()), None, None, 1.0, 1.0, None).unwrap();
         assert_eq!(expected, actual.trim());
     }
 }
