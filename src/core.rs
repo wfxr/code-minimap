@@ -20,7 +20,7 @@ pub fn write(
 
     let start = start_line.map(|s| cmp::max(s, 1)).unwrap_or(1);
     let lines = reader.lines().skip(start - 1);
-    let lines: Box<dyn Iterator<Item=Result<String, io::Error>>> = if let Some(end) = end_line {
+    let lines: Box<dyn Iterator<Item=io::Result<String>>> = if let Some(end) = end_line {
         let take = if end >= start { end - start + 1 } else { 0 };
         Box::new(lines.take(take))
     } else {
