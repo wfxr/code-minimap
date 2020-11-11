@@ -1,6 +1,6 @@
 [package]
 name = "code-minimap"
-version = "0.4.3"
+version = "0.4.4-rc.0"
 authors = ["Wenxuan Zhang <wenxuangm@gmail.com>"]
 description="A high performance code minimap generator"
 categories = ["command-line-utilities"]
