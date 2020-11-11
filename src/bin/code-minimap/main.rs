@@ -3,8 +3,16 @@ mod util;
 use cli::{CompletionOpt, Opt, StructOpt, Subcommand};
 use std::fs::File;
 use std::io::{self, BufRead, BufReader};
+use std::process;
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() {
+    if let Err(e) = run() {
+        eprintln!("{}: {}", env!("CARGO_PKG_NAME"), e);
+        process::exit(1)
+    }
+}
+
+fn run() -> Result<(), Box<dyn std::error::Error>> {
     util::reset_signal_pipe_handler();
     let opt: Opt = Opt::from_args();
     match &opt.subcommand {
@@ -16,7 +24,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 Some(path) => Box::new(BufReader::new(File::open(path)?)),
                 None => Box::new(BufReader::new(io::stdin())),
             };
-            code_minimap::print(reader, opt.hscale, opt.vscale, opt.padding).unwrap();
+            code_minimap::print(reader, opt.hscale, opt.vscale, opt.padding)?;
         }
     }
     Ok(())
