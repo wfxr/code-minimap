@@ -20,11 +20,12 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             Opt::clap().gen_completions_to(env!("CARGO_PKG_NAME"), *shell, &mut std::io::stdout());
         }
         None => {
+            let stdin = io::stdin();
             let reader: Box<dyn BufRead> = match &opt.file {
                 Some(path) => Box::new(BufReader::new(File::open(path)?)),
-                None => Box::new(BufReader::new(io::stdin())),
+                None => Box::new(stdin.lock()),
             };
-            code_minimap::print(reader, opt.hscale, opt.vscale, opt.padding)?;
+            code_minimap::printstd(reader, opt.hscale, opt.vscale, opt.padding)?;
         }
     }
     Ok(())
