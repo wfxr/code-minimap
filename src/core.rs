@@ -1,5 +1,4 @@
 use itertools::Itertools;
-use std::cmp;
 use std::io::{self, BufRead, Write};
 use std::ops::Range;
 
@@ -11,31 +10,37 @@ pub fn write(
     vscale: f64,
     padding: Option<usize>,
 ) -> io::Result<()> {
-    let mut frame = vec![0..0; 4];
-    for chunk in &reader
+    let mut frame = [0..0, 0..0, 0..0, 0..0];
+    reader
         .lines()
+        .map(|line| {
+            line.map(|line| {
+                let beg = line.find(|c: char| !c.is_whitespace()).unwrap_or(usize::max_value());
+                let end = line.rfind(|c: char| !c.is_whitespace()).unwrap_or(0);
+                (beg, end)
+            })
+        })
         .enumerate()
         .map(|(i, line)| (scale(i, vscale), line))
         .group_by(|(i, _)| *i)
         .into_iter()
         .chunks(4)
-    {
-        let mut chunk_size = 0;
-        for (i, (_, group)) in chunk.enumerate() {
-            let (mut beg, mut end) = (usize::max_value(), 0);
-            for (_, line) in group {
-                let line: String = line?;
-                beg = cmp::min(beg, line.find(|c: char| !c.is_whitespace()).unwrap_or(beg));
-                end = cmp::max(end, line.rfind(|c: char| !c.is_whitespace()).unwrap_or(end));
+        .into_iter()
+        .try_for_each(|chunk| {
+            let mut chunk_size = 0;
+            for (i, (_, group)) in chunk.enumerate() {
+                let (beg, end) = group
+                    .into_iter()
+                    .try_fold((usize::max_value(), 0), |(beg, end), (_, line)| {
+                        line.map(|(b, e)| (beg.min(b), end.max(e)))
+                    })?;
+                frame[i] = beg..(end + 1);
+                chunk_size += 1;
             }
-            frame[i] = beg..(end + 1);
-            chunk_size += 1;
-        }
-        frame.iter_mut().skip(chunk_size).for_each(|row| *row = 0..0);
-        scale_frame(&mut frame, hscale);
-        write_frame(&mut writer, &frame, padding)?;
-    }
-    Ok(())
+            frame.iter_mut().skip(chunk_size).for_each(|row| *row = 0..0);
+            scale_frame(&mut frame, hscale);
+            write_frame(&mut writer, &frame, padding)
+        })
 }
 
 /// Print minimap to the stdout.
@@ -94,7 +99,7 @@ fn write_frame(mut output: impl Write, frame: &[Range<usize>], padding: Option<u
 }
 
 fn scale_frame(frame: &mut [Range<usize>], factor: f64) {
-    for x in frame.iter_mut() {
+    for x in frame {
         *x = scale(x.start, factor)..scale(x.end, factor);
     }
 }
