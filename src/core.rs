@@ -54,9 +54,9 @@ pub fn write(
 /// use std::io::BufReader;
 ///
 /// let stdin = io::stdin();
-/// code_minimap::printstd(stdin.lock(), 1.0, 1.0, None).unwrap();
+/// code_minimap::print(stdin.lock(), 1.0, 1.0, None).unwrap();
 /// ```
-pub fn printstd(reader: impl BufRead, hscale: f64, vscale: f64, padding: Option<usize>) -> io::Result<()> {
+pub fn print(reader: impl BufRead, hscale: f64, vscale: f64, padding: Option<usize>) -> io::Result<()> {
     write(io::stdout(), reader, hscale, vscale, padding)
 }
 
@@ -80,7 +80,7 @@ pub fn write_to_string(reader: impl BufRead, hscale: f64, vscale: f64, padding: 
     Ok(String::from_utf8(buf).unwrap())
 }
 
-fn write_frame(mut output: impl Write, frame: &[Range<usize>], padding: Option<usize>) -> std::io::Result<()> {
+fn write_frame(mut writer: impl Write, frame: &[Range<usize>], padding: Option<usize>) -> std::io::Result<()> {
     let idx = |pos| {
         frame
             .iter()
@@ -93,8 +93,8 @@ fn write_frame(mut output: impl Write, frame: &[Range<usize>], padding: Option<u
         .map(|i| BRAILLE_MATRIX[(idx(i)) + (idx(i + 1) << 4)])
         .collect();
     match padding {
-        Some(padding) => writeln!(output, "{0:<1$}", line, padding),
-        None => writeln!(output, "{}", line),
+        Some(padding) => writeln!(writer, "{0:<1$}", line, padding),
+        None => writeln!(writer, "{}", line),
     }
 }
 

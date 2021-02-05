@@ -25,7 +25,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                 Some(path) => Box::new(BufReader::new(File::open(path)?)),
                 None => Box::new(stdin.lock()),
             };
-            code_minimap::printstd(reader, opt.hscale, opt.vscale, opt.padding)?;
+            code_minimap::print(reader, opt.hscale, opt.vscale, opt.padding)?;
         }
     }
     Ok(())
