@@ -29,18 +29,16 @@ path = "src/lib.rs"
 name = "code-minimap"
 path = "src/bin/code-minimap/main.rs"
 
-[target.'cfg(target_family = "unix")'.dependencies]
-nix = "0.18"
-
 [dependencies]
-itertools = "0.10"
-structopt = { version = "0.3", features = ["wrap_help"], optional = true }
+anyhow = "^1.0.38"
+itertools = "^0.10.0"
+structopt = { version = "^0.3.21", features = ["wrap_help"], optional = true }
 
 [build-dependencies]
-structopt = "0.3"
+structopt = "^0.3.21"
 
 [dev-dependencies]
-rstest = "0.6"
+rstest = "^0.6.4"
 
 [profile.release]
 lto = true
