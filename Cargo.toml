@@ -10,12 +10,16 @@ keywords = [
     "tool",
 ]
 license = "MIT/Apache-2.0"
-exclude = [
-    "/completions"
-]
+exclude = ["/completions"]
 repository = "https://github.com/wfxr/code-minimap"
 edition = "2018"
 build = "build.rs"
+
+[features]
+default = ["application"]
+# Feature required for build the `code-minimap` application. Should be disabled when
+# depending on `code-minimap` as a library.
+application = ["structopt"]
 
 [lib]
 name = "code_minimap"
@@ -29,14 +33,14 @@ path = "src/bin/code-minimap/main.rs"
 nix = "0.18"
 
 [dependencies]
-itertools = "0.9"
-structopt = { version = "0.3", features = ["wrap_help"] }
+itertools = "0.10"
+structopt = { version = "0.3", features = ["wrap_help"], optional = true }
 
 [build-dependencies]
 structopt = "0.3"
 
 [dev-dependencies]
-rstest = "0.6.4"
+rstest = "0.6"
 
 [profile.release]
 lto = true
