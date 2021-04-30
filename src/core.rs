@@ -1,6 +1,53 @@
+use std::{
+    fs::File,
+    io::{self, BufRead, BufReader, Read, Write},
+    ops::Range,
+    path::Path,
+};
+
 use itertools::Itertools;
-use std::io::{self, BufRead, Write};
-use std::ops::Range;
+
+pub struct LossyReader {
+    reader: BufReader<File>,
+}
+
+impl LossyReader {
+    pub fn open(path: impl AsRef<Path>) -> io::Result<Self> {
+        let file = File::open(path)?;
+        let reader = BufReader::new(file);
+
+        Ok(Self {
+            reader,
+        })
+    }
+}
+
+impl Read for LossyReader {
+    fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
+        self.reader.read(buf)
+    }
+}
+
+impl BufRead for LossyReader {
+    fn fill_buf(&mut self) -> io::Result<&[u8]> {
+        self.reader.fill_buf()
+    }
+
+    fn consume(&mut self, amt: usize) {
+        self.reader.consume(amt)
+    }
+
+    fn read_line(&mut self, buf: &mut String) -> std::io::Result<usize> {
+        let mut append_buf = Vec::new();
+        let res = self.read_until(0x0a, &mut append_buf);
+        if let Err(err) = res
+        {
+            return Err(err);
+        }
+        buf.push_str(&String::from_utf8_lossy(&append_buf));
+        Ok(buf.len())
+    }
+}
 
 /// Write minimap to the writer.
 pub fn write(
@@ -15,7 +62,9 @@ pub fn write(
         .lines()
         .map(|line| {
             line.map(|line| {
-                let beg = line.find(|c: char| !c.is_whitespace()).unwrap_or(usize::max_value());
+                let beg = line
+                    .find(|c: char| !c.is_whitespace())
+                    .unwrap_or(usize::max_value());
                 let end = line.rfind(|c: char| !c.is_whitespace()).unwrap_or(0);
                 (beg, end)
             })
@@ -28,16 +77,21 @@ pub fn write(
         .into_iter()
         .try_for_each(|chunk| {
             let mut chunk_size = 0;
-            for (i, (_, group)) in chunk.enumerate() {
-                let (beg, end) = group
-                    .into_iter()
-                    .try_fold((usize::max_value(), 0), |(beg, end), (_, line)| {
+            for (i, (_, group)) in chunk.enumerate()
+            {
+                let (beg, end) = group.into_iter().try_fold(
+                    (usize::max_value(), 0),
+                    |(beg, end), (_, line)| {
                         line.map(|(b, e)| (beg.min(b), end.max(e)))
-                    })?;
+                    },
+                )?;
                 frame[i] = beg..(end + 1);
                 chunk_size += 1;
             }
-            frame.iter_mut().skip(chunk_size).for_each(|row| *row = 0..0);
+            frame
+                .iter_mut()
+                .skip(chunk_size)
+                .for_each(|row| *row = 0..0);
             scale_frame(&mut frame, hscale);
             write_frame(&mut writer, &frame, padding)
         })
@@ -50,13 +104,17 @@ pub fn write(
 /// Basic usage:
 ///
 /// ```
-/// use std::io;
-/// use std::io::BufReader;
+/// use std::{io, io::BufReader};
 ///
 /// let stdin = io::stdin();
 /// code_minimap::print(stdin.lock(), 1.0, 1.0, None).unwrap();
 /// ```
-pub fn print(reader: impl BufRead, hscale: f64, vscale: f64, padding: Option<usize>) -> io::Result<()> {
+pub fn print(
+    reader: impl BufRead,
+    hscale: f64,
+    vscale: f64,
+    padding: Option<usize>,
+) -> io::Result<()> {
     write(io::stdout(), reader, hscale, vscale, padding)
 }
 
@@ -67,39 +125,56 @@ pub fn print(reader: impl BufRead, hscale: f64, vscale: f64, padding: Option<usi
 /// Basic usage:
 ///
 /// ```
-/// use std::io;
-/// use std::io::BufReader;
+/// use std::{io, io::BufReader};
 ///
 /// let stdin = io::stdin();
-/// let s = code_minimap::write_to_string(stdin.lock(), 1.0, 1.0, None).unwrap();
+/// let s =
+///     code_minimap::write_to_string(stdin.lock(), 1.0, 1.0, None).unwrap();
 /// print!("{}", s);
 /// ```
-pub fn write_to_string(reader: impl BufRead, hscale: f64, vscale: f64, padding: Option<usize>) -> io::Result<String> {
+pub fn write_to_string(
+    reader: impl BufRead,
+    hscale: f64,
+    vscale: f64,
+    padding: Option<usize>,
+) -> io::Result<String> {
     let mut buf = Vec::new();
     write(&mut buf, reader, hscale, vscale, padding)?;
     Ok(String::from_utf8(buf).unwrap())
 }
 
-fn write_frame(mut writer: impl Write, frame: &[Range<usize>], padding: Option<usize>) -> std::io::Result<()> {
+fn write_frame(
+    mut writer: impl Write,
+    frame: &[Range<usize>],
+    padding: Option<usize>,
+) -> std::io::Result<()> {
     let idx = |pos| {
-        frame
-            .iter()
-            .enumerate()
-            .fold(0, |acc, (i, x)| if x.contains(&pos) { acc + (1 << i) } else { acc })
+        frame.iter().enumerate().fold(0, |acc, (i, x)| {
+            if x.contains(&pos)
+            {
+                acc + (1 << i)
+            }
+            else
+            {
+                acc
+            }
+        })
     };
     let end = frame.iter().max_by_key(|range| range.end).unwrap().end;
     let line: String = (0..end)
         .step_by(2)
         .map(|i| BRAILLE_MATRIX[(idx(i)) + (idx(i + 1) << 4)])
         .collect();
-    match padding {
+    match padding
+    {
         Some(padding) => writeln!(writer, "{0:<1$}", line, padding),
         None => writeln!(writer, "{}", line),
     }
 }
 
 fn scale_frame(frame: &mut [Range<usize>], factor: f64) {
-    for x in frame {
+    for x in frame
+    {
         *x = scale(x.start, factor)..scale(x.end, factor);
     }
 }
@@ -130,8 +205,9 @@ const BRAILLE_MATRIX : [char; 256] = [
 
 #[cfg(test)]
 mod test {
-    use super::*;
     use rstest::*;
+
+    use super::*;
 
     #[rstest(
         input,
