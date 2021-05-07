@@ -5,7 +5,7 @@ use std::{
 };
 
 use cli::{CompletionOpt, Opt, StructOpt, Subcommand};
-use code_minimap::LossyReader;
+use code_minimap::lossy_reader::LossyReader;
 
 fn main() {
     if let Err(e) = try_main() {
