@@ -1,6 +1,7 @@
 complete -c code-minimap -n "__fish_use_subcommand" -s H -l horizontal-scale -d 'Specify horizontal scale factor'
 complete -c code-minimap -n "__fish_use_subcommand" -s V -l vertical-scale -d 'Specify vertical scale factor'
 complete -c code-minimap -n "__fish_use_subcommand" -l padding -d 'Specify padding width'
+complete -c code-minimap -n "__fish_use_subcommand" -l encoding -d 'Specify input encoding' -r -f -a "UTF8 UTF8Lossy"
 complete -c code-minimap -n "__fish_use_subcommand" -s h -l help -d 'Prints help information'
 complete -c code-minimap -n "__fish_use_subcommand" -l version -d 'Prints version information'
 complete -c code-minimap -n "__fish_use_subcommand" -f -a "completion" -d 'Generate shell completion file'

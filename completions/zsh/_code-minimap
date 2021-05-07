@@ -20,6 +20,7 @@ _code-minimap() {
 '-V+[Specify vertical scale factor]' \
 '--vertical-scale=[Specify vertical scale factor]' \
 '--padding=[Specify padding width]' \
+'--encoding=[Specify input encoding]: :(UTF8 UTF8Lossy)' \
 '-h[Prints help information]' \
 '--help[Prints help information]' \
 '--version[Prints version information]' \

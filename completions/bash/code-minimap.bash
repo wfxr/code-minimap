@@ -26,7 +26,7 @@ _code-minimap() {
 
     case "${cmd}" in
         code-minimap)
-            opts=" -h -H -V  --help --version --horizontal-scale --vertical-scale --padding  <FILE>  completion help"
+            opts=" -h -H -V  --help --version --horizontal-scale --vertical-scale --padding --encoding  <FILE>  completion help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -51,6 +51,10 @@ _code-minimap() {
                     ;;
                 --padding)
                     COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --encoding)
+                    COMPREPLY=($(compgen -W "UTF8 UTF8Lossy" -- "${cur}"))
                     return 0
                     ;;
                 *)

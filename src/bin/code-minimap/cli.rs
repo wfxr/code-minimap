@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use structopt::clap::{self, AppSettings};
+use structopt::clap::{self, arg_enum, AppSettings};
 pub use structopt::StructOpt;
 
 #[derive(StructOpt)]
@@ -25,6 +25,10 @@ pub struct Opt {
     #[structopt(long = "padding")]
     pub padding: Option<usize>,
 
+    /// Specify input encoding
+    #[structopt(long = "encoding", default_value = "UTF8Lossy", possible_values = &Encoding::variants(), case_insensitive = true)]
+    pub encoding: Encoding,
+
     /// Subcommand
     #[structopt(subcommand)]
     pub subcommand: Option<Subcommand>,
@@ -41,4 +45,11 @@ pub struct CompletionOpt {
     /// Target shell name
     #[structopt(possible_values = &clap::Shell::variants())]
     pub shell: clap::Shell,
+}
+
+arg_enum! {
+    pub enum Encoding {
+        UTF8,
+        UTF8Lossy,
+    }
 }
