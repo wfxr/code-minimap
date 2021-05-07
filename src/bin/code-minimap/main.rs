@@ -1,5 +1,6 @@
 mod cli;
 use std::{
+    fs::File,
     io::{self, BufRead},
     process,
 };
@@ -28,8 +29,8 @@ fn try_main() -> anyhow::Result<()> {
         None => {
             let stdin = io::stdin();
             let reader: Box<dyn BufRead> = match &opt.file {
-                Some(path) => Box::new(LossyReader::open(path)?),
-                None => Box::new(stdin.lock()),
+                Some(path) => Box::new(LossyReader::new(File::open(path)?)),
+                None => Box::new(LossyReader::new(stdin)),
             };
             code_minimap::print(reader, opt.hscale, opt.vscale, opt.padding)?;
         }

@@ -1,44 +1,36 @@
-use std::{
-    fs::File,
-    io::{self, BufRead, BufReader, Read},
-    path::Path,
-};
+use std::io::{self, BufRead, BufReader, Read};
 
-pub struct LossyReader {
-    reader: BufReader<File>,
+pub struct LossyReader<R> {
+    inner: BufReader<R>,
 }
 
-impl LossyReader {
-    pub fn open(path: impl AsRef<Path>) -> io::Result<Self> {
-        let file = File::open(path)?;
-        let reader = BufReader::new(file);
-
-        Ok(Self { reader })
+impl<R: Read> LossyReader<R> {
+    pub fn new(inner: R) -> Self {
+        Self {
+            inner: BufReader::new(inner),
+        }
     }
 }
 
-impl Read for LossyReader {
+impl<R: Read> Read for LossyReader<R> {
     fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
-        self.reader.read(buf)
+        self.inner.read(buf)
     }
 }
 
-impl BufRead for LossyReader {
+impl<R: Read> BufRead for LossyReader<R> {
     fn fill_buf(&mut self) -> io::Result<&[u8]> {
-        self.reader.fill_buf()
+        self.inner.fill_buf()
     }
 
     fn consume(&mut self, amt: usize) {
-        self.reader.consume(amt)
+        self.inner.consume(amt)
     }
 
     fn read_line(&mut self, buf: &mut String) -> std::io::Result<usize> {
-        let mut append_buf = Vec::new();
-        let res = self.read_until(0x0a, &mut append_buf);
-        if let Err(err) = res {
-            return Err(err);
-        }
-        buf.push_str(&String::from_utf8_lossy(&append_buf));
-        Ok(buf.len())
+        let mut bytes = Vec::new();
+        let len = self.read_until(b'\n', &mut bytes)?;
+        buf.push_str(&String::from_utf8_lossy(&bytes));
+        Ok(len)
     }
 }
