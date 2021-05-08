@@ -1,6 +1,9 @@
+use std::{
+    io::{self, BufRead, Write},
+    ops::Range,
+};
+
 use itertools::Itertools;
-use std::io::{self, BufRead, Write};
-use std::ops::Range;
 
 /// Write minimap to the writer.
 pub fn write(
@@ -50,8 +53,7 @@ pub fn write(
 /// Basic usage:
 ///
 /// ```
-/// use std::io;
-/// use std::io::BufReader;
+/// use std::{io, io::BufReader};
 ///
 /// let stdin = io::stdin();
 /// code_minimap::print(stdin.lock(), 1.0, 1.0, None).unwrap();
@@ -67,11 +69,11 @@ pub fn print(reader: impl BufRead, hscale: f64, vscale: f64, padding: Option<usi
 /// Basic usage:
 ///
 /// ```
-/// use std::io;
-/// use std::io::BufReader;
+/// use std::{io, io::BufReader};
 ///
 /// let stdin = io::stdin();
-/// let s = code_minimap::write_to_string(stdin.lock(), 1.0, 1.0, None).unwrap();
+/// let s =
+///     code_minimap::write_to_string(stdin.lock(), 1.0, 1.0, None).unwrap();
 /// print!("{}", s);
 /// ```
 pub fn write_to_string(reader: impl BufRead, hscale: f64, vscale: f64, padding: Option<usize>) -> io::Result<String> {
@@ -130,8 +132,9 @@ const BRAILLE_MATRIX : [char; 256] = [
 
 #[cfg(test)]
 mod test {
-    use super::*;
     use rstest::*;
+
+    use super::*;
 
     #[rstest(
         input,

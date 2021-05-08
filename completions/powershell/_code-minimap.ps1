@@ -25,6 +25,7 @@ Register-ArgumentCompleter -Native -CommandName 'code-minimap' -ScriptBlock {
             [CompletionResult]::new('-V', 'V', [CompletionResultType]::ParameterName, 'Specify vertical scale factor')
             [CompletionResult]::new('--vertical-scale', 'vertical-scale', [CompletionResultType]::ParameterName, 'Specify vertical scale factor')
             [CompletionResult]::new('--padding', 'padding', [CompletionResultType]::ParameterName, 'Specify padding width')
+            [CompletionResult]::new('--encoding', 'encoding', [CompletionResultType]::ParameterName, 'Specify input encoding')
             [CompletionResult]::new('-h', 'h', [CompletionResultType]::ParameterName, 'Prints help information')
             [CompletionResult]::new('--help', 'help', [CompletionResultType]::ParameterName, 'Prints help information')
             [CompletionResult]::new('--version', 'version', [CompletionResultType]::ParameterName, 'Prints version information')

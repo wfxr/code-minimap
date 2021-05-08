@@ -1,8 +1,12 @@
 mod cli;
-use cli::{CompletionOpt, Opt, StructOpt, Subcommand};
-use std::fs::File;
-use std::io::{self, BufRead, BufReader};
-use std::process;
+use std::{
+    fs::File,
+    io::{self, BufRead, BufReader, Read},
+    process,
+};
+
+use cli::{CompletionOpt, Encoding, Opt, StructOpt, Subcommand};
+use code_minimap::lossy_reader::LossyReader;
 
 fn main() {
     if let Err(e) = try_main() {
@@ -24,12 +28,19 @@ fn try_main() -> anyhow::Result<()> {
         }
         None => {
             let stdin = io::stdin();
-            let reader: Box<dyn BufRead> = match &opt.file {
-                Some(path) => Box::new(BufReader::new(File::open(path)?)),
-                None => Box::new(stdin.lock()),
+            let reader = match &opt.file {
+                Some(path) => buf_reader(&opt.encoding, File::open(path)?),
+                None => buf_reader(&opt.encoding, stdin),
             };
             code_minimap::print(reader, opt.hscale, opt.vscale, opt.padding)?;
         }
     }
     Ok(())
+}
+
+fn buf_reader<R: 'static + Read>(encoding: &Encoding, reader: R) -> Box<dyn BufRead> {
+    match encoding {
+        Encoding::UTF8 => Box::new(BufReader::new(reader)),
+        Encoding::UTF8Lossy => Box::new(LossyReader::new(reader)),
+    }
 }
