@@ -54,6 +54,15 @@ Run `code-minimap --help` to view detailed usage.
 
 ### Installation
 
+#### On Windows
+
+You can install `code-minimap` with [scoop](https://github.com/lukesampson/scoop):
+
+```
+scoop bucket add extras
+scoop install code-minimap
+```
+
 #### On Arch Linux
 
 `code-minimap` is available in the Arch User Repository. To install it from [AUR](https://aur.archlinux.org/packages/code-minimap):
