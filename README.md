@@ -76,7 +76,6 @@ yay -S code-minimap
 You can install `code-minimap` with Homebrew:
 
 ```
-brew tap wfxr/code-minimap
 brew install code-minimap
 ```
 
