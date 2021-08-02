@@ -38,7 +38,7 @@ structopt = { version = "^0.3.22", features = ["wrap_help"], optional = true }
 structopt = "^0.3.22"
 
 [dev-dependencies]
-rstest = "^0.10.0"
+rstest = "^0.11.0"
 
 [profile.release]
 lto = true
