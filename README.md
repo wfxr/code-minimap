@@ -79,6 +79,12 @@ You can install `code-minimap` with Homebrew:
 brew install code-minimap
 ```
 
+or with MacPorts:
+
+```
+sudo port install code-minimap
+```
+
 #### From binaries
 
 Prebuilt versions of `code-minimap` for various architectures are available at [Github release page](https://github.com/wfxr/code-minimap/releases).
