@@ -30,7 +30,7 @@ name = "code-minimap"
 path = "src/bin/code-minimap/main.rs"
 
 [dependencies]
-anyhow = "^1.0.44"
+anyhow = "^1.0.45"
 itertools = "^0.10.1"
 structopt = { version = "^0.3.23", features = ["wrap_help"], optional = true }
 
