@@ -58,7 +58,7 @@ dependencies = [
 
 [[package]]
 name = "code-minimap"
-version = "0.6.2-dev"
+version = "0.6.2"
 dependencies = [
  "anyhow",
  "itertools",
