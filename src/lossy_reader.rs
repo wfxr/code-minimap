@@ -6,9 +6,7 @@ pub struct LossyReader<R> {
 
 impl<R: Read> LossyReader<R> {
     pub fn new(inner: R) -> Self {
-        Self {
-            inner: BufReader::new(inner),
-        }
+        Self { inner: BufReader::new(inner) }
     }
 }
 
