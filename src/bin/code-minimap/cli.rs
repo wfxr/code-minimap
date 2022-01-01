@@ -24,7 +24,7 @@ pub struct App {
     pub padding: Option<usize>,
 
     /// Specify input encoding
-    #[clap(long, default_value = Encoding::VARIANTS[0], possible_values = Encoding::VARIANTS)]
+    #[clap(long, default_value = Encoding::VARIANTS[0], possible_values = Encoding::VARIANTS, ignore_case = true)]
     pub encoding: Encoding,
 
     /// Subcommand
