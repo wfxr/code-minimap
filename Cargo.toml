@@ -31,7 +31,7 @@ path = "src/bin/code-minimap/main.rs"
 
 [dependencies]
 anyhow = "1"
-itertools = "*"
+itertools = "0"
 
 clap = { version = "3", features = ["wrap_help", "derive"], optional = true }
 clap_complete = { version = "3", optional = true }
