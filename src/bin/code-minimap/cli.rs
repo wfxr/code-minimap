@@ -1,55 +1,57 @@
 use std::path::PathBuf;
 
-use structopt::clap::{self, arg_enum, AppSettings};
-pub use structopt::StructOpt;
+use clap::{AppSettings, Parser};
+use clap_complete::Shell;
+use strum::{Display, EnumString, EnumVariantNames, VariantNames};
 
-#[derive(StructOpt)]
-#[structopt(
-    global_settings(&[AppSettings::ColoredHelp]),
-    about = env!("CARGO_PKG_DESCRIPTION"))
-]
-pub struct Opt {
+#[derive(Parser)]
+#[clap(about, version)]
+#[clap(global_setting(AppSettings::DeriveDisplayOrder))]
+pub struct App {
     /// File to read
-    #[structopt(name = "FILE")]
     pub file: Option<PathBuf>,
 
     /// Specify horizontal scale factor
-    #[structopt(short = "H", long = "horizontal-scale", default_value = "1.0")]
+    #[clap(short = 'H', long = "horizontal-scale", default_value = "1.0")]
     pub hscale: f64,
 
     /// Specify vertical scale factor
-    #[structopt(short = "V", long = "vertical-scale", default_value = "1.0")]
+    #[clap(short = 'V', long = "vertical-scale", default_value = "1.0")]
     pub vscale: f64,
 
     /// Specify padding width
-    #[structopt(long = "padding")]
+    #[clap(long)]
     pub padding: Option<usize>,
 
     /// Specify input encoding
-    #[structopt(long = "encoding", default_value = "UTF8Lossy", possible_values = &Encoding::variants(), case_insensitive = true)]
+    #[clap(long, default_value = Encoding::VARIANTS[0], possible_values = Encoding::VARIANTS)]
     pub encoding: Encoding,
 
     /// Subcommand
-    #[structopt(subcommand)]
+    #[clap(subcommand)]
     pub subcommand: Option<Subcommand>,
 }
 
-#[derive(StructOpt)]
+#[derive(Parser)]
 pub enum Subcommand {
     /// Generate shell completion file
-    Completion(CompletionOpt),
+    Completion {
+        /// Target shell name
+        #[clap(arg_enum)]
+        shell: Shell,
+    },
 }
 
-#[derive(StructOpt)]
+#[derive(Parser)]
 pub struct CompletionOpt {
     /// Target shell name
-    #[structopt(possible_values = &clap::Shell::variants())]
-    pub shell: clap::Shell,
+    #[clap(arg_enum)]
+    pub shell: Shell,
 }
 
-arg_enum! {
-    pub enum Encoding {
-        UTF8,
-        UTF8Lossy,
-    }
+#[derive(Display, EnumString, EnumVariantNames, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[strum(ascii_case_insensitive)]
+pub enum Encoding {
+    UTF8Lossy,
+    UTF8,
 }
