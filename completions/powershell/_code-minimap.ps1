@@ -26,25 +26,19 @@ Register-ArgumentCompleter -Native -CommandName 'code-minimap' -ScriptBlock {
             [CompletionResult]::new('--vertical-scale', 'vertical-scale', [CompletionResultType]::ParameterName, 'Specify vertical scale factor')
             [CompletionResult]::new('--padding', 'padding', [CompletionResultType]::ParameterName, 'Specify padding width')
             [CompletionResult]::new('--encoding', 'encoding', [CompletionResultType]::ParameterName, 'Specify input encoding')
-            [CompletionResult]::new('-h', 'h', [CompletionResultType]::ParameterName, 'Prints help information')
-            [CompletionResult]::new('--help', 'help', [CompletionResultType]::ParameterName, 'Prints help information')
-            [CompletionResult]::new('--version', 'version', [CompletionResultType]::ParameterName, 'Prints version information')
+            [CompletionResult]::new('-h', 'h', [CompletionResultType]::ParameterName, 'Print help information')
+            [CompletionResult]::new('--help', 'help', [CompletionResultType]::ParameterName, 'Print help information')
+            [CompletionResult]::new('--version', 'version', [CompletionResultType]::ParameterName, 'Print version information')
             [CompletionResult]::new('completion', 'completion', [CompletionResultType]::ParameterValue, 'Generate shell completion file')
-            [CompletionResult]::new('help', 'help', [CompletionResultType]::ParameterValue, 'Prints this message or the help of the given subcommand(s)')
+            [CompletionResult]::new('help', 'help', [CompletionResultType]::ParameterValue, 'Print this message or the help of the given subcommand(s)')
             break
         }
         'code-minimap;completion' {
-            [CompletionResult]::new('-h', 'h', [CompletionResultType]::ParameterName, 'Prints help information')
-            [CompletionResult]::new('--help', 'help', [CompletionResultType]::ParameterName, 'Prints help information')
-            [CompletionResult]::new('-V', 'V', [CompletionResultType]::ParameterName, 'Prints version information')
-            [CompletionResult]::new('--version', 'version', [CompletionResultType]::ParameterName, 'Prints version information')
+            [CompletionResult]::new('-h', 'h', [CompletionResultType]::ParameterName, 'Print help information')
+            [CompletionResult]::new('--help', 'help', [CompletionResultType]::ParameterName, 'Print help information')
             break
         }
         'code-minimap;help' {
-            [CompletionResult]::new('-h', 'h', [CompletionResultType]::ParameterName, 'Prints help information')
-            [CompletionResult]::new('--help', 'help', [CompletionResultType]::ParameterName, 'Prints help information')
-            [CompletionResult]::new('-V', 'V', [CompletionResultType]::ParameterName, 'Prints version information')
-            [CompletionResult]::new('--version', 'version', [CompletionResultType]::ParameterName, 'Prints version information')
             break
         }
     })

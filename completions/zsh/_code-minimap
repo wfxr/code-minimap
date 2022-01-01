@@ -15,16 +15,16 @@ _code-minimap() {
 
     local context curcontext="$curcontext" state line
     _arguments "${_arguments_options[@]}" \
-'-H+[Specify horizontal scale factor]' \
-'--horizontal-scale=[Specify horizontal scale factor]' \
-'-V+[Specify vertical scale factor]' \
-'--vertical-scale=[Specify vertical scale factor]' \
-'--padding=[Specify padding width]' \
-'--encoding=[Specify input encoding]: :(UTF8 UTF8Lossy)' \
-'-h[Prints help information]' \
-'--help[Prints help information]' \
-'--version[Prints version information]' \
-'::FILE -- File to read:_files' \
+'-H+[Specify horizontal scale factor]:HSCALE: ' \
+'--horizontal-scale=[Specify horizontal scale factor]:HSCALE: ' \
+'-V+[Specify vertical scale factor]:VSCALE: ' \
+'--vertical-scale=[Specify vertical scale factor]:VSCALE: ' \
+'--padding=[Specify padding width]:PADDING: ' \
+'--encoding=[Specify input encoding]:ENCODING:(UTF8Lossy UTF8)' \
+'-h[Print help information]' \
+'--help[Print help information]' \
+'--version[Print version information]' \
+'::file -- File to read:' \
 ":: :_code-minimap_commands" \
 "*::: :->code-minimap" \
 && ret=0
@@ -36,19 +36,13 @@ _code-minimap() {
         case $line[2] in
             (completion)
 _arguments "${_arguments_options[@]}" \
-'-h[Prints help information]' \
-'--help[Prints help information]' \
-'-V[Prints version information]' \
-'--version[Prints version information]' \
-':shell -- Target shell name:(zsh bash fish powershell elvish)' \
+'-h[Print help information]' \
+'--help[Print help information]' \
+':shell -- Target shell name:(bash elvish fish powershell zsh)' \
 && ret=0
 ;;
 (help)
 _arguments "${_arguments_options[@]}" \
-'-h[Prints help information]' \
-'--help[Prints help information]' \
-'-V[Prints version information]' \
-'--version[Prints version information]' \
 && ret=0
 ;;
         esac
@@ -59,23 +53,19 @@ esac
 (( $+functions[_code-minimap_commands] )) ||
 _code-minimap_commands() {
     local commands; commands=(
-        "completion:Generate shell completion file" \
-"help:Prints this message or the help of the given subcommand(s)" \
+'completion:Generate shell completion file' \
+'help:Print this message or the help of the given subcommand(s)' \
     )
     _describe -t commands 'code-minimap commands' commands "$@"
 }
 (( $+functions[_code-minimap__completion_commands] )) ||
 _code-minimap__completion_commands() {
-    local commands; commands=(
-        
-    )
+    local commands; commands=()
     _describe -t commands 'code-minimap completion commands' commands "$@"
 }
 (( $+functions[_code-minimap__help_commands] )) ||
 _code-minimap__help_commands() {
-    local commands; commands=(
-        
-    )
+    local commands; commands=()
     _describe -t commands 'code-minimap help commands' commands "$@"
 }
 

@@ -1,12 +1,13 @@
 mod cli;
+
+use clap::{IntoApp, Parser};
+use cli::{App, Encoding, Subcommand};
+use code_minimap::lossy_reader::LossyReader;
 use std::{
     fs::File,
     io::{self, BufRead, BufReader, Read},
     process,
 };
-
-use cli::{CompletionOpt, Encoding, Opt, StructOpt, Subcommand};
-use code_minimap::lossy_reader::LossyReader;
 
 fn main() {
     if let Err(e) = try_main() {
@@ -21,10 +22,11 @@ fn main() {
 }
 
 fn try_main() -> anyhow::Result<()> {
-    let opt: Opt = Opt::from_args();
-    match &opt.subcommand {
-        Some(Subcommand::Completion(CompletionOpt { shell })) => {
-            Opt::clap().gen_completions_to(env!("CARGO_PKG_NAME"), *shell, &mut std::io::stdout());
+    let opt: App = App::parse();
+    match opt.subcommand {
+        Some(Subcommand::Completion { shell }) => {
+            let app = &mut App::into_app();
+            clap_complete::generate(shell, app, app.get_name().to_string(), &mut io::stdout())
         }
         None => {
             let stdin = io::stdin();

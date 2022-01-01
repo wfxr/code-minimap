@@ -9,10 +9,9 @@ _code-minimap() {
     for i in ${COMP_WORDS[@]}
     do
         case "${i}" in
-            code-minimap)
-                cmd="code-minimap"
+            "$1")
+                cmd="code__minimap"
                 ;;
-            
             completion)
                 cmd+="__completion"
                 ;;
@@ -25,19 +24,18 @@ _code-minimap() {
     done
 
     case "${cmd}" in
-        code-minimap)
-            opts=" -h -H -V  --help --version --horizontal-scale --vertical-scale --padding --encoding  <FILE>  completion help"
+        code__minimap)
+            opts="-h -H -V --help --version --horizontal-scale --vertical-scale --padding --encoding <FILE> completion help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
-                
                 --horizontal-scale)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
-                    -H)
+                -H)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -45,7 +43,7 @@ _code-minimap() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
-                    -V)
+                -V)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -54,7 +52,7 @@ _code-minimap() {
                     return 0
                     ;;
                 --encoding)
-                    COMPREPLY=($(compgen -W "UTF8 UTF8Lossy" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "UTF8Lossy UTF8" -- "${cur}"))
                     return 0
                     ;;
                 *)
@@ -64,15 +62,13 @@ _code-minimap() {
             COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
             return 0
             ;;
-        
         code__minimap__completion)
-            opts=" -h -V  --help --version  <shell> "
+            opts="-h --help bash elvish fish powershell zsh"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
-                
                 *)
                     COMPREPLY=()
                     ;;
@@ -81,13 +77,12 @@ _code-minimap() {
             return 0
             ;;
         code__minimap__help)
-            opts=" -h -V  --help --version  "
+            opts=""
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
-                
                 *)
                     COMPREPLY=()
                     ;;
