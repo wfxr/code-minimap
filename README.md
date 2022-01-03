@@ -23,7 +23,7 @@ You can use it to implement IDE-like minimap plugin for a terminal text editor,
 ### Features
 
 * Small and *fast* (see [benchmarks](#benchmark) below).
-* Little constant memory usage.
+* Memory efficient.
 * Freely zoom.
 * [Multi platforms](https://github.com/wfxr/code-minimap/releases) support.
 
