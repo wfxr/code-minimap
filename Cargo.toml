@@ -35,12 +35,12 @@ itertools = "0"
 
 clap = { version = "3", features = ["wrap_help", "derive"], optional = true }
 clap_complete = { version = "3", optional = true }
-strum = { version = "0.23", features = ["derive"], optional = true }
+strum = { version = "0.24", features = ["derive"], optional = true }
 
 [build-dependencies]
 clap = { version = "3", features = ["wrap_help", "derive"], optional = true }
 clap_complete = { version = "3", optional = true }
-strum = { version = "0.23", features = ["derive"], optional = true }
+strum = { version = "0.24", features = ["derive"], optional = true }
 
 [dev-dependencies]
 rstest = "^0.12.0"
