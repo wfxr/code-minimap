@@ -93,7 +93,7 @@ Prebuilt versions of `code-minimap` for various architectures are available at [
 
 #### From source
 
-`code-minimap` is also published on [crates.io](https://crates.io). If you have Rust toolchains (1.40 or above) installed you can use `cargo` to install it from source:
+`code-minimap` is also published on [crates.io](https://crates.io). If you have the latest Rust toolchains installed you can use `cargo` to install it from source:
 
 ```
 cargo install --locked code-minimap
