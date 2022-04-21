@@ -63,13 +63,21 @@ scoop bucket add extras
 scoop install code-minimap
 ```
 
-#### On Arch Linux
+#### On Linux
 
+##### Arch Linux
 `code-minimap` is available in the Arch User Repository. To install it from [AUR](https://aur.archlinux.org/packages/code-minimap):
 
 ```
 yay -S code-minimap
 ```
+
+##### Gentoo
+`code-minimap` is available in the the [GURU](https://github.com/gentoo/guru/) project repository:
+```
+emerge --ask code-minimap
+```
+
 
 #### On macOS
 
