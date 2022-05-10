@@ -25,8 +25,8 @@ fn try_main() -> anyhow::Result<()> {
     let opt: App = App::parse();
     match opt.subcommand {
         Some(Subcommand::Completion { shell }) => {
-            let app = &mut App::into_app();
-            clap_complete::generate(shell, app, app.get_name().to_string(), &mut io::stdout())
+            let cmd = &mut App::command();
+            clap_complete::generate(shell, cmd, cmd.get_name().to_string(), &mut io::stdout())
         }
         None => {
             let stdin = io::stdin();

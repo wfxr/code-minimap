@@ -8,12 +8,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .or_else(|| std::env::var_os("OUT_DIR"))
         .expect("OUT_DIR not found");
     let outdir_path = Path::new(&outdir);
-    let app = &mut App::into_app();
+    let cmd = &mut App::command();
 
     for shell in Shell::value_variants() {
         let dir = outdir_path.join(shell.to_string());
         fs::create_dir_all(&dir)?;
-        clap_complete::generate_to(*shell, app, app.get_name().to_string(), &dir)?;
+        clap_complete::generate_to(*shell, cmd, cmd.get_name().to_string(), &dir)?;
     }
     Ok(())
 }
