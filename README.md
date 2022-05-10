@@ -54,15 +54,6 @@ Run `code-minimap --help` to view detailed usage.
 
 ### Installation
 
-#### On Windows
-
-You can install `code-minimap` with [scoop](https://github.com/lukesampson/scoop):
-
-```
-scoop bucket add extras
-scoop install code-minimap
-```
-
 #### On Linux
 
 ##### Arch Linux
@@ -91,6 +82,15 @@ or with MacPorts:
 
 ```
 sudo port install code-minimap
+```
+
+#### On Windows
+
+You can install `code-minimap` with [scoop](https://github.com/lukesampson/scoop):
+
+```
+scoop bucket add extras
+scoop install code-minimap
 ```
 
 #### From binaries
