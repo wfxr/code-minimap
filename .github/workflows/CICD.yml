@@ -16,15 +16,16 @@ jobs:
       fail-fast: false
       matrix:
         job:
-          - { os: ubuntu-latest  , target: arm-unknown-linux-gnueabihf , use-cross: use-cross }
-          - { os: ubuntu-latest  , target: aarch64-unknown-linux-gnu   , use-cross: use-cross }
-          - { os: ubuntu-latest  , target: i686-unknown-linux-gnu      , use-cross: use-cross }
-          - { os: ubuntu-latest  , target: i686-unknown-linux-musl     , use-cross: use-cross }
-          - { os: ubuntu-latest  , target: x86_64-unknown-linux-gnu    , use-cross: use-cross }
-          - { os: ubuntu-latest  , target: x86_64-unknown-linux-musl   , use-cross: use-cross }
-          - { os: macos-latest   , target: x86_64-apple-darwin                                }
-          # - { os: windows-latest , target: i686-pc-windows-msvc                               }
-          - { os: windows-latest , target: x86_64-pc-windows-msvc                             }
+          - { os: ubuntu-latest , target: arm-unknown-linux-gnueabihf, use-cross: true }
+          - { os: ubuntu-latest , target: aarch64-unknown-linux-gnu  , use-cross: true }
+          - { os: ubuntu-latest , target: i686-unknown-linux-gnu     , use-cross: true }
+          - { os: ubuntu-latest , target: i686-unknown-linux-musl    , use-cross: true }
+          - { os: ubuntu-latest , target: x86_64-unknown-linux-musl  , use-cross: true }
+          # - { os: macos-latest  , target: aarch64-apple-darwin       , use-cross: true }
+          - { os: ubuntu-latest , target: x86_64-unknown-linux-gnu   ,                 }
+          - { os: macos-latest  , target: x86_64-apple-darwin                          }
+          - { os: windows-latest, target: x86_64-pc-windows-msvc                       }
+          - { os: windows-latest, target: i686-pc-windows-msvc                         }
     steps:
     - name: Git checkout
       uses: actions/checkout@v1
@@ -109,10 +110,6 @@ jobs:
         echo set-output name=DPKG_NAME::${DPKG_NAME}
         echo ::set-output name=DPKG_NAME::${DPKG_NAME}
         # target-specific options
-        # * CARGO_USE_CROSS (truthy)
-        CARGO_USE_CROSS='true' ; case '${{ matrix.job.use-cross }}' in ''|0|f|false|n|no) unset CARGO_USE_CROSS ;; esac;
-        echo set-output name=CARGO_USE_CROSS::${CARGO_USE_CROSS:-<empty>/false}
-        echo ::set-output name=CARGO_USE_CROSS::${CARGO_USE_CROSS}
         # # * `arm` cannot be tested on ubuntu-* hosts (b/c testing is currently primarily done via comparison of target outputs with built-in outputs and the `arm` target is not executable on the host)
         JOB_DO_TESTING="true"
         case ${{ matrix.job.target }} in arm-*) unset JOB_DO_TESTING ;; esac;
@@ -147,21 +144,21 @@ jobs:
     - name: Build
       uses: actions-rs/cargo@v1
       with:
-        use-cross: ${{ steps.vars.outputs.CARGO_USE_CROSS }}
+        use-cross: ${{ matrix.job.use-cross }}
         command: build
         args: --release --target=${{ matrix.job.target }} ${{ matrix.job.cargo-options }}
     - name: Test
       uses: actions-rs/cargo@v1
       with:
-        use-cross: ${{ steps.vars.outputs.CARGO_USE_CROSS }}
+        use-cross: ${{ matrix.job.use-cross }}
         command: test
         args: --target=${{ matrix.job.target }} ${{ steps.vars.outputs.CARGO_TEST_OPTIONS}} ${{ matrix.job.cargo-options }}
     - name: Test run
       uses: actions-rs/cargo@v1
       with:
-        use-cross: ${{ steps.vars.outputs.CARGO_USE_CROSS }}
+        use-cross: ${{ matrix.job.use-cross }}
         command: run
-        args: Cargo.toml
+        args: --target=${{ matrix.job.target }} -- Cargo.toml
     - name: Strip binary
       shell: bash
       run: |
