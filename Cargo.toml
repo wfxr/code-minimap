@@ -43,7 +43,7 @@ clap_complete = { version = "3", optional = true }
 strum = { version = "0.24", features = ["derive"], optional = true }
 
 [dev-dependencies]
-rstest = "^0.13.0"
+rstest = "^0.14.0"
 
 [profile.release]
 lto = true
