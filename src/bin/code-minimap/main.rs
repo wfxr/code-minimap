@@ -1,7 +1,7 @@
 mod cli;
 
 use clap::{IntoApp, Parser};
-use cli::{App, Encoding, Subcommand};
+use cli::{App, Encoding, Subcommand, Operation};
 use code_minimap::lossy_reader::LossyReader;
 use std::{
     fs::File,
@@ -26,15 +26,30 @@ fn try_main() -> anyhow::Result<()> {
     match opt.subcommand {
         Some(Subcommand::Completion { shell }) => {
             let cmd = &mut App::command();
-            clap_complete::generate(shell, cmd, cmd.get_name().to_string(), &mut io::stdout())
+            clap_complete::generate(shell, cmd, cmd.get_name().to_string(), &mut io::stdout());
+            return Ok(())
         }
-        None => {
-            let stdin = io::stdin();
-            let reader = match &opt.file {
-                Some(path) => buf_reader(&opt.encoding, File::open(path)?),
-                None => buf_reader(&opt.encoding, stdin),
-            };
+        None => (),
+    }
+
+    let stdin = io::stdin();
+    let reader = match &opt.file {
+        Some(path) => buf_reader(&opt.encoding, File::open(path)?),
+        None => buf_reader(&opt.encoding, stdin),
+    };
+
+    match opt.operation {
+        Operation::GenerateMinimap => {
             code_minimap::print(reader, opt.hscale, opt.vscale, opt.padding)?;
+        }
+        Operation::LongestLine => {
+            let longest_line = code_minimap::get_longest_line(reader);
+            let file_name = match &opt.file {
+                Some(path) => String::from(path.to_str().unwrap()),
+                None => String::from("stdin"),
+            };
+            println!("{}", file_name);
+            println!("{}", longest_line);
         }
     }
     Ok(())

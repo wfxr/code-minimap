@@ -82,6 +82,15 @@ pub fn write_to_string(reader: impl BufRead, hscale: f64, vscale: f64, padding: 
     Ok(String::from_utf8(buf).unwrap())
 }
 
+/// Get the longest line of the input
+pub fn get_longest_line(reader: impl BufRead) -> usize {
+    let mut longest = 0;
+    for line in reader.lines() {
+        longest = std::cmp::max(longest, line.unwrap().len());
+    }
+    longest
+}
+
 fn write_frame(mut writer: impl Write, frame: &[Range<usize>], padding: Option<usize>) -> std::io::Result<()> {
     let idx = |pos| {
         frame

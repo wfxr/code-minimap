@@ -27,6 +27,10 @@ pub struct App {
     #[clap(long, default_value = Encoding::VARIANTS[0], possible_values = Encoding::VARIANTS, ignore_case = true)]
     pub encoding: Encoding,
 
+    /// Specify mode
+    #[clap(short = 'O', long = "operation", default_value = "GenerateMinimap")]
+    pub operation: Operation,
+
     /// Subcommand
     #[clap(subcommand)]
     pub subcommand: Option<Subcommand>,
@@ -55,3 +59,11 @@ pub enum Encoding {
     UTF8Lossy,
     UTF8,
 }
+
+#[derive(Display, EnumString, EnumVariantNames, PartialEq, Eq)]
+#[strum(ascii_case_insensitive)]
+pub enum Operation {
+    GenerateMinimap,
+    LongestLine
+}
+
