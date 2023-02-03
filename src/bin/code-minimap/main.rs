@@ -34,7 +34,21 @@ fn try_main() -> anyhow::Result<()> {
 
     let stdin = io::stdin();
     let reader = match &opt.file {
-        Some(path) => buf_reader(&opt.encoding, File::open(path)?),
+        Some(path) => {
+            let file = match File::open(path) {
+                Ok(f) => f,
+                Err(e) => {
+                    // We might get passed an empty file when opening a new file with minimap.vim.
+                    if opt.operation == Operation::LongestLine {
+                        println!("{}", String::from(path.to_str().unwrap()));
+                        println!("0");
+                        return Ok(());
+                    }
+                    return Err(anyhow::Error::new(e));
+                }
+            };
+            buf_reader(&opt.encoding, file)
+        },
         None => buf_reader(&opt.encoding, stdin),
     };
 
