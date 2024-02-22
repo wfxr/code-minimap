@@ -1,6 +1,6 @@
 mod cli;
 
-use clap::{IntoApp, Parser};
+use clap::{CommandFactory, Parser};
 use cli::{App, Encoding, Subcommand};
 use code_minimap::lossy_reader::LossyReader;
 use std::{

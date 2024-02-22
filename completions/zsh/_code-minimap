@@ -20,11 +20,11 @@ _code-minimap() {
 '-V+[Specify vertical scale factor]:VSCALE: ' \
 '--vertical-scale=[Specify vertical scale factor]:VSCALE: ' \
 '--padding=[Specify padding width]:PADDING: ' \
-'--encoding=[Specify input encoding]:ENCODING:(UTF8Lossy UTF8)' \
-'-h[Print help information]' \
-'--help[Print help information]' \
-'--version[Print version information]' \
-'::file -- File to read:' \
+'--encoding=[Specify input encoding]:ENCODING:(utf8-lossy utf8)' \
+'--version[Print version]' \
+'-h[Print help]' \
+'--help[Print help]' \
+'::file -- File to read:_files' \
 ":: :_code-minimap_commands" \
 "*::: :->code-minimap" \
 && ret=0
@@ -36,14 +36,34 @@ _code-minimap() {
         case $line[2] in
             (completion)
 _arguments "${_arguments_options[@]}" \
-'-h[Print help information]' \
-'--help[Print help information]' \
+'-h[Print help]' \
+'--help[Print help]' \
 ':shell -- Target shell name:(bash elvish fish powershell zsh)' \
 && ret=0
 ;;
 (help)
 _arguments "${_arguments_options[@]}" \
+":: :_code-minimap__help_commands" \
+"*::: :->help" \
 && ret=0
+
+    case $state in
+    (help)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:code-minimap-help-command-$line[1]:"
+        case $line[1] in
+            (completion)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+(help)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+        esac
+    ;;
+esac
 ;;
         esac
     ;;
@@ -63,10 +83,27 @@ _code-minimap__completion_commands() {
     local commands; commands=()
     _describe -t commands 'code-minimap completion commands' commands "$@"
 }
+(( $+functions[_code-minimap__help__completion_commands] )) ||
+_code-minimap__help__completion_commands() {
+    local commands; commands=()
+    _describe -t commands 'code-minimap help completion commands' commands "$@"
+}
 (( $+functions[_code-minimap__help_commands] )) ||
 _code-minimap__help_commands() {
-    local commands; commands=()
+    local commands; commands=(
+'completion:Generate shell completion file' \
+'help:Print this message or the help of the given subcommand(s)' \
+    )
     _describe -t commands 'code-minimap help commands' commands "$@"
 }
+(( $+functions[_code-minimap__help__help_commands] )) ||
+_code-minimap__help__help_commands() {
+    local commands; commands=()
+    _describe -t commands 'code-minimap help help commands' commands "$@"
+}
 
-_code-minimap "$@"
+if [ "$funcstack[1]" = "_code-minimap" ]; then
+    _code-minimap "$@"
+else
+    compdef _code-minimap code-minimap
+fi

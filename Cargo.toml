@@ -2,13 +2,10 @@
 name = "code-minimap"
 version = "0.6.5-dev"
 authors = ["Wenxuan Zhang <wenxuangm@gmail.com>"]
-description="A high performance code minimap generator"
+description = "A high performance code minimap generator"
 categories = ["command-line-utilities"]
 homepage = "https://github.com/wfxr/code-minimap"
-keywords = [
-    "minimap",
-    "tool",
-]
+keywords = ["minimap", "tool"]
 license = "MIT/Apache-2.0"
 exclude = ["/completions"]
 repository = "https://github.com/wfxr/code-minimap"
@@ -33,17 +30,17 @@ path = "src/bin/code-minimap/main.rs"
 anyhow = "1"
 itertools = "0"
 
-clap = { version = "3", features = ["wrap_help", "derive"], optional = true }
-clap_complete = { version = "3", optional = true }
-strum = { version = "0.24", features = ["derive"], optional = true }
+clap = { version = "4", features = ["wrap_help", "derive"], optional = true }
+clap_complete = { version = "4", optional = true }
+strum = { version = "0", features = ["derive"], optional = true }
 
 [build-dependencies]
-clap = { version = "3", features = ["wrap_help", "derive"], optional = true }
-clap_complete = { version = "3", optional = true }
-strum = { version = "0.24", features = ["derive"], optional = true }
+clap = { version = "4", features = ["wrap_help", "derive"], optional = true }
+clap_complete = { version = "4", optional = true }
+strum = { version = "0", features = ["derive"], optional = true }
 
 [dev-dependencies]
-rstest = "^0.17.0"
+rstest = "0"
 
 [profile.release]
 lto = true

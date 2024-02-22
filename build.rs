@@ -1,4 +1,4 @@
-use clap::{ArgEnum, IntoApp};
+use clap::CommandFactory;
 use std::{fs, path::Path};
 
 include!("src/bin/code-minimap/cli.rs");
