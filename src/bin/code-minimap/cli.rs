@@ -33,7 +33,7 @@ pub struct App {
 
     /// Print version.
     #[arg(long, action = ArgAction::Version)]
-    version: bool,
+    version: Option<bool>,
 }
 
 #[derive(Parser)]
