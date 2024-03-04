@@ -159,6 +159,10 @@ jobs:
         shell: bash
         run: $BUILD_CMD test --locked --target=${{ matrix.job.target }} ${{ steps.test-options.outputs.CARGO_TEST_OPTIONS}}
 
+      - name: Test run
+        shell: bash
+        run: $BUILD_CMD run --locked --target=${{ matrix.job.target }} -- Cargo.toml
+
       - name: Strip binary
         shell: bash
         run: |
@@ -166,13 +170,6 @@ jobs:
             # strip binary if possible
             strip "${{ steps.bin.outputs.BIN_PATH }}" || true
           fi
-
-      - name: Test run
-        uses: actions-rs/cargo@v1
-        with:
-          use-cross: ${{ matrix.job.use-cross }}
-          command: run
-          args: --target=${{ matrix.job.target }} -- Cargo.toml
 
       - name: Create tarball
         id: package
