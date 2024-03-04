@@ -1,12 +1,12 @@
 [package]
 name = "code-minimap"
-version = "0.6.6"
+version = "0.6.7"
 authors = ["Wenxuan Zhang <wenxuangm@gmail.com>"]
 description = "A high performance code minimap generator"
 categories = ["command-line-utilities"]
 homepage = "https://github.com/wfxr/code-minimap"
 keywords = ["minimap", "tool"]
-license = "Apache-2.0 or MIT"
+license = "Apache-2.0 OR MIT"
 exclude = ["/completions"]
 repository = "https://github.com/wfxr/code-minimap"
 edition = "2021"
