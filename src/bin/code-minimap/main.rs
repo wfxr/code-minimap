@@ -1,5 +1,6 @@
 mod cli;
 
+use anyhow::bail;
 use clap::{CommandFactory, Parser};
 use cli::{App, Encoding, Subcommand};
 use code_minimap::lossy_reader::LossyReader;
@@ -32,6 +33,7 @@ fn try_main() -> anyhow::Result<()> {
             let stdin = io::stdin();
             let reader = match &opt.file {
                 Some(path) => buf_reader(&opt.encoding, File::open(path)?),
+                None if atty::is(atty::Stream::Stdin) => bail!("no input file specified (use -h for help)"),
                 None => buf_reader(&opt.encoding, stdin),
             };
             code_minimap::print(reader, opt.hscale, opt.vscale, opt.padding)?;
