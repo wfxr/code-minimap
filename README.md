@@ -63,8 +63,15 @@ Run `code-minimap --help` to view detailed usage.
 yay -S code-minimap
 ```
 
+##### Alpine Linux
+`code-minimap` is available in the [testing](https://pkgs.alpinelinux.org/packages?name=code-minimap&branch=edge&repo=testing) repository:
+
+```
+apk add code-minimap
+```
+
 ##### Gentoo
-`code-minimap` is available in the the [GURU](https://github.com/gentoo/guru/) project repository:
+`code-minimap` is available in the [GURU](https://github.com/gentoo/guru/) project repository:
 ```
 emerge --ask code-minimap
 ```
