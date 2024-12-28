@@ -1,12 +1,29 @@
 use std::path::PathBuf;
 
-use clap::{ArgAction, Parser, ValueEnum};
+use clap::{
+    builder::{
+        styling::{AnsiColor, Effects},
+        Styles,
+    },
+    ArgAction,
+    Parser,
+    ValueEnum,
+};
+
 use clap_complete::Shell;
 
 #[derive(Parser)]
-#[command(about, version)]
-#[command(next_line_help = true)]
-#[command(disable_version_flag = true)]
+#[clap(about, version)]
+#[clap(next_line_help = true)]
+#[clap(disable_version_flag = true)]
+#[clap(
+    styles(Styles::styled()
+        .header(AnsiColor::Yellow.on_default() | Effects::BOLD)
+        .usage(AnsiColor::Yellow.on_default() | Effects::BOLD)
+        .literal(AnsiColor::Green.on_default() | Effects::BOLD)
+        .placeholder(AnsiColor::Cyan.on_default())
+    )
+)]
 pub struct App {
     /// File to read.
     pub file: Option<PathBuf>,
