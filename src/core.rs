@@ -18,25 +18,23 @@ pub fn write(
         .lines()
         .map(|line| {
             line.map(|line| {
-                let beg = line.find(|c: char| !c.is_whitespace()).unwrap_or(usize::max_value());
+                let beg = line.find(|c: char| !c.is_whitespace()).unwrap_or(usize::MAX);
                 let end = line.rfind(|c: char| !c.is_whitespace()).unwrap_or(0);
                 (beg, end)
             })
         })
         .enumerate()
         .map(|(i, line)| (scale(i, vscale), line))
-        .group_by(|(i, _)| *i)
+        .chunk_by(|(i, _)| *i)
         .into_iter()
         .chunks(4)
         .into_iter()
         .try_for_each(|chunk| {
             let mut chunk_size = 0;
             for (i, (_, group)) in chunk.enumerate() {
-                let (beg, end) = group
-                    .into_iter()
-                    .try_fold((usize::max_value(), 0), |(beg, end), (_, line)| {
-                        line.map(|(b, e)| (beg.min(b), end.max(e)))
-                    })?;
+                let (beg, end) = group.into_iter().try_fold((usize::MAX, 0), |(beg, end), (_, line)| {
+                    line.map(|(b, e)| (beg.min(b), end.max(e)))
+                })?;
                 frame[i] = beg..(end + 1);
                 chunk_size += 1;
             }

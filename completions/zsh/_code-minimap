@@ -14,12 +14,12 @@ _code-minimap() {
     fi
 
     local context curcontext="$curcontext" state line
-    _arguments "${_arguments_options[@]}" \
-'-H+[Specify horizontal scale factor]:HSCALE: ' \
-'--horizontal-scale=[Specify horizontal scale factor]:HSCALE: ' \
-'-V+[Specify vertical scale factor]:VSCALE: ' \
-'--vertical-scale=[Specify vertical scale factor]:VSCALE: ' \
-'--padding=[Specify padding width]:PADDING: ' \
+    _arguments "${_arguments_options[@]}" : \
+'-H+[Specify horizontal scale factor]:HSCALE:_default' \
+'--horizontal-scale=[Specify horizontal scale factor]:HSCALE:_default' \
+'-V+[Specify vertical scale factor]:VSCALE:_default' \
+'--vertical-scale=[Specify vertical scale factor]:VSCALE:_default' \
+'--padding=[Specify padding width]:PADDING:_default' \
 '--encoding=[Specify input encoding]:ENCODING:(utf8-lossy utf8)' \
 '--version[Print version]' \
 '-h[Print help]' \
@@ -35,14 +35,14 @@ _code-minimap() {
         curcontext="${curcontext%:*:*}:code-minimap-command-$line[2]:"
         case $line[2] in
             (completion)
-_arguments "${_arguments_options[@]}" \
+_arguments "${_arguments_options[@]}" : \
 '-h[Print help]' \
 '--help[Print help]' \
 ':shell -- Target shell name:(bash elvish fish powershell zsh)' \
 && ret=0
 ;;
 (help)
-_arguments "${_arguments_options[@]}" \
+_arguments "${_arguments_options[@]}" : \
 ":: :_code-minimap__help_commands" \
 "*::: :->help" \
 && ret=0
@@ -54,11 +54,11 @@ _arguments "${_arguments_options[@]}" \
         curcontext="${curcontext%:*:*}:code-minimap-help-command-$line[1]:"
         case $line[1] in
             (completion)
-_arguments "${_arguments_options[@]}" \
+_arguments "${_arguments_options[@]}" : \
 && ret=0
 ;;
 (help)
-_arguments "${_arguments_options[@]}" \
+_arguments "${_arguments_options[@]}" : \
 && ret=0
 ;;
         esac
@@ -83,11 +83,6 @@ _code-minimap__completion_commands() {
     local commands; commands=()
     _describe -t commands 'code-minimap completion commands' commands "$@"
 }
-(( $+functions[_code-minimap__help__completion_commands] )) ||
-_code-minimap__help__completion_commands() {
-    local commands; commands=()
-    _describe -t commands 'code-minimap help completion commands' commands "$@"
-}
 (( $+functions[_code-minimap__help_commands] )) ||
 _code-minimap__help_commands() {
     local commands; commands=(
@@ -95,6 +90,11 @@ _code-minimap__help_commands() {
 'help:Print this message or the help of the given subcommand(s)' \
     )
     _describe -t commands 'code-minimap help commands' commands "$@"
+}
+(( $+functions[_code-minimap__help__completion_commands] )) ||
+_code-minimap__help__completion_commands() {
+    local commands; commands=()
+    _describe -t commands 'code-minimap help completion commands' commands "$@"
 }
 (( $+functions[_code-minimap__help__help_commands] )) ||
 _code-minimap__help__help_commands() {
