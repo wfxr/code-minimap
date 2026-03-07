@@ -27,7 +27,8 @@ end
 complete -c code-minimap -n "__fish_code_minimap_needs_command" -s H -l horizontal-scale -d 'Specify horizontal scale factor' -r
 complete -c code-minimap -n "__fish_code_minimap_needs_command" -s V -l vertical-scale -d 'Specify vertical scale factor' -r
 complete -c code-minimap -n "__fish_code_minimap_needs_command" -l padding -d 'Specify padding width' -r
-complete -c code-minimap -n "__fish_code_minimap_needs_command" -l encoding -d 'Specify input encoding' -r -f -a "{utf8-lossy\t'',utf8\t''}"
+complete -c code-minimap -n "__fish_code_minimap_needs_command" -l encoding -d 'Specify input encoding' -r -f -a "utf8-lossy\t''
+utf8\t''"
 complete -c code-minimap -n "__fish_code_minimap_needs_command" -l version -d 'Print version'
 complete -c code-minimap -n "__fish_code_minimap_needs_command" -s h -l help -d 'Print help'
 complete -c code-minimap -n "__fish_code_minimap_needs_command" -a "completion" -d 'Generate shell completion file'
