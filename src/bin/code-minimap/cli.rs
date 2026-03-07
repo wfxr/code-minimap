@@ -1,13 +1,13 @@
 use std::path::PathBuf;
 
 use clap::{
-    builder::{
-        styling::{AnsiColor, Effects},
-        Styles,
-    },
     ArgAction,
     Parser,
     ValueEnum,
+    builder::{
+        Styles,
+        styling::{AnsiColor, Effects},
+    },
 };
 
 use clap_complete::Shell;

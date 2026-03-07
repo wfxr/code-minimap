@@ -6,16 +6,16 @@ use cli::{App, Encoding, Subcommand};
 use code_minimap::lossy_reader::LossyReader;
 use std::{
     fs::File,
-    io::{self, BufRead, BufReader, Read},
+    io::{self, BufRead, BufReader, IsTerminal, Read},
     process,
 };
 
 fn main() {
     if let Err(e) = try_main() {
-        if let Some(ioerr) = e.root_cause().downcast_ref::<io::Error>() {
-            if ioerr.kind() == io::ErrorKind::BrokenPipe {
-                std::process::exit(0);
-            }
+        if let Some(ioerr) = e.root_cause().downcast_ref::<io::Error>()
+            && ioerr.kind() == io::ErrorKind::BrokenPipe
+        {
+            std::process::exit(0);
         }
         eprintln!("{}: {}", env!("CARGO_PKG_NAME"), e);
         process::exit(1)
@@ -33,7 +33,7 @@ fn try_main() -> anyhow::Result<()> {
             let stdin = io::stdin();
             let reader = match &opt.file {
                 Some(path) => buf_reader(&opt.encoding, File::open(path)?),
-                None if atty::is(atty::Stream::Stdin) => bail!("no input file specified (use -h for help)"),
+                None if std::io::stdin().is_terminal() => bail!("no input file specified (use -h for help)"),
                 None => buf_reader(&opt.encoding, stdin),
             };
             code_minimap::print(reader, opt.hscale, opt.vscale, opt.padding)?;
