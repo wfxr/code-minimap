@@ -9,7 +9,7 @@ keywords = ["minimap", "tool"]
 license = "Apache-2.0 OR MIT"
 exclude = ["/completions"]
 repository = "https://github.com/wfxr/code-minimap"
-edition = "2021"
+edition = "2024"
 build = "build.rs"
 
 [features]
@@ -32,7 +32,6 @@ itertools = "0"
 
 clap = { version = "4", features = ["wrap_help", "derive"], optional = true }
 clap_complete = { version = "4", optional = true }
-atty = "0.2.14"
 
 [build-dependencies]
 clap = { version = "4", features = ["wrap_help", "derive"], optional = true }
