@@ -40,6 +40,10 @@ pub struct App {
     /// Specify padding width.
     pub padding: Option<usize>,
 
+    /// Specify render mode.
+    #[arg(short, long, value_enum, default_value_t = CliRenderMode::Braille, ignore_case = true)]
+    pub mode: CliRenderMode,
+
     /// Specify input encoding.
     #[arg(long, value_enum, default_value_t = Encoding::UTF8Lossy, ignore_case = true)]
     pub encoding: Encoding,
@@ -66,6 +70,12 @@ pub enum Subcommand {
 pub struct CompletionOpt {
     /// Target shell name.
     pub shell: Shell,
+}
+
+#[derive(Copy, Clone, ValueEnum)]
+pub enum CliRenderMode {
+    Braille,
+    Block,
 }
 
 #[derive(Copy, Clone, ValueEnum)]

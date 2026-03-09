@@ -23,6 +23,8 @@ set edit:completion:arg-completer[code-minimap] = {|@words|
             cand -V 'Specify vertical scale factor'
             cand --vertical-scale 'Specify vertical scale factor'
             cand --padding 'Specify padding width'
+            cand -m 'Specify render mode'
+            cand --mode 'Specify render mode'
             cand --encoding 'Specify input encoding'
             cand --version 'Print version'
             cand -h 'Print help'

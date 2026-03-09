@@ -2,8 +2,8 @@ mod cli;
 
 use anyhow::bail;
 use clap::{CommandFactory, Parser};
-use cli::{App, Encoding, Subcommand};
-use code_minimap::lossy_reader::LossyReader;
+use cli::{App, CliRenderMode, Encoding, Subcommand};
+use code_minimap::{RenderMode, lossy_reader::LossyReader};
 use std::{
     fs::File,
     io::{self, BufRead, BufReader, IsTerminal, Read},
@@ -36,7 +36,11 @@ fn try_main() -> anyhow::Result<()> {
                 None if std::io::stdin().is_terminal() => bail!("no input file specified (use -h for help)"),
                 None => buf_reader(&opt.encoding, stdin),
             };
-            code_minimap::print(reader, opt.hscale, opt.vscale, opt.padding)?;
+            let mode = match opt.mode {
+                CliRenderMode::Braille => RenderMode::Braille,
+                CliRenderMode::Block => RenderMode::Block,
+            };
+            code_minimap::print(reader, opt.hscale, opt.vscale, opt.padding, mode)?;
         }
     }
     Ok(())
