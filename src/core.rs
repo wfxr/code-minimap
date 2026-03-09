@@ -5,6 +5,25 @@ use std::{
 
 use itertools::Itertools;
 
+/// Render mode for the minimap output.
+#[derive(Copy, Clone, Default, PartialEq, Eq)]
+pub enum RenderMode {
+    /// Use braille characters (⣿⣿⣿). Each character represents a 4×2 grid.
+    #[default]
+    Braille,
+    /// Use block characters (███). Each character represents a single cell.
+    Block,
+}
+
+impl RenderMode {
+    fn rows(&self) -> usize {
+        match self {
+            Self::Braille => 4,
+            Self::Block => 1,
+        }
+    }
+}
+
 /// Write minimap to the writer.
 pub fn write(
     mut writer: impl Write,
@@ -12,7 +31,9 @@ pub fn write(
     hscale: f64,
     vscale: f64,
     padding: Option<usize>,
+    mode: RenderMode,
 ) -> io::Result<()> {
+    let rows = mode.rows();
     let mut frame = [0..0, 0..0, 0..0, 0..0];
     reader
         .lines()
@@ -27,7 +48,7 @@ pub fn write(
         .map(|(i, line)| (scale(i, vscale), line))
         .chunk_by(|(i, _)| *i)
         .into_iter()
-        .chunks(4)
+        .chunks(rows)
         .into_iter()
         .try_for_each(|chunk| {
             let mut chunk_size = 0;
@@ -38,9 +59,13 @@ pub fn write(
                 frame[i] = beg..(end + 1);
                 chunk_size += 1;
             }
-            frame.iter_mut().skip(chunk_size).for_each(|row| *row = 0..0);
-            scale_frame(&mut frame, hscale);
-            write_frame(&mut writer, &frame, padding)
+            frame[chunk_size..rows].iter_mut().for_each(|row| *row = 0..0);
+            let frame = &mut frame[..rows];
+            scale_frame(frame, hscale);
+            match mode {
+                RenderMode::Braille => write_frame_braille(&mut writer, frame, padding),
+                RenderMode::Block => write_frame_block(&mut writer, frame, padding),
+            }
         })
 }
 
@@ -54,10 +79,16 @@ pub fn write(
 /// use std::{io, io::BufReader};
 ///
 /// let stdin = io::stdin();
-/// code_minimap::print(stdin.lock(), 1.0, 1.0, None).unwrap();
+/// code_minimap::print(stdin.lock(), 1.0, 1.0, None, Default::default()).unwrap();
 /// ```
-pub fn print(reader: impl BufRead, hscale: f64, vscale: f64, padding: Option<usize>) -> io::Result<()> {
-    write(io::stdout(), reader, hscale, vscale, padding)
+pub fn print(
+    reader: impl BufRead,
+    hscale: f64,
+    vscale: f64,
+    padding: Option<usize>,
+    mode: RenderMode,
+) -> io::Result<()> {
+    write(io::stdout(), reader, hscale, vscale, padding, mode)
 }
 
 /// Write minimap to a string.
@@ -71,16 +102,22 @@ pub fn print(reader: impl BufRead, hscale: f64, vscale: f64, padding: Option<usi
 ///
 /// let stdin = io::stdin();
 /// let s =
-///     code_minimap::write_to_string(stdin.lock(), 1.0, 1.0, None).unwrap();
+///     code_minimap::write_to_string(stdin.lock(), 1.0, 1.0, None, Default::default()).unwrap();
 /// print!("{}", s);
 /// ```
-pub fn write_to_string(reader: impl BufRead, hscale: f64, vscale: f64, padding: Option<usize>) -> io::Result<String> {
+pub fn write_to_string(
+    reader: impl BufRead,
+    hscale: f64,
+    vscale: f64,
+    padding: Option<usize>,
+    mode: RenderMode,
+) -> io::Result<String> {
     let mut buf = Vec::new();
-    write(&mut buf, reader, hscale, vscale, padding)?;
+    write(&mut buf, reader, hscale, vscale, padding, mode)?;
     Ok(String::from_utf8(buf).unwrap())
 }
 
-fn write_frame(mut writer: impl Write, frame: &[Range<usize>], padding: Option<usize>) -> std::io::Result<()> {
+fn write_frame_braille(mut writer: impl Write, frame: &[Range<usize>], padding: Option<usize>) -> io::Result<()> {
     let idx = |pos| {
         frame
             .iter()
@@ -91,6 +128,23 @@ fn write_frame(mut writer: impl Write, frame: &[Range<usize>], padding: Option<u
     let line: String = (0..end)
         .step_by(2)
         .map(|i| BRAILLE_MATRIX[(idx(i)) + (idx(i + 1) << 4)])
+        .collect();
+    match padding {
+        Some(padding) => writeln!(writer, "{0:<1$}", line, padding),
+        None => writeln!(writer, "{}", line),
+    }
+}
+
+fn write_frame_block(mut writer: impl Write, frame: &[Range<usize>], padding: Option<usize>) -> io::Result<()> {
+    let range = &frame[0];
+    if range.start >= range.end {
+        return match padding {
+            Some(padding) => writeln!(writer, "{0:<1$}", "", padding),
+            None => writeln!(writer),
+        };
+    }
+    let line: String = (0..range.end)
+        .map(|i| if range.contains(&i) { '█' } else { ' ' })
         .collect();
     match padding {
         Some(padding) => writeln!(writer, "{0:<1$}", line, padding),
@@ -143,8 +197,21 @@ mod test {
         case("aaa\n aa\n  a\n   a", "⠙⢇"),
         case("  a  b c\n d efg  \n    h  i\n jk", "⢐⡛⠿⠭")
     )]
-    fn test_write_to_string(input: &'static str, expected: &str) {
-        let actual = write_to_string(input.as_bytes(), 1.0, 1.0, None).unwrap();
+    fn test_write_to_string_braille(input: &'static str, expected: &str) {
+        let actual = write_to_string(input.as_bytes(), 1.0, 1.0, None, RenderMode::Braille).unwrap();
+        assert_eq!(expected, actual.trim());
+    }
+
+    #[rstest(
+        input,
+        expected,
+        case("", ""),
+        case("a", "█"),
+        case("aaaa\nbbbb\ncccc\ndddd", "████\n████\n████\n████"),
+        case("aaa\n aa\n  a\n   a", "███\n ██\n  █\n   █")
+    )]
+    fn test_write_to_string_block(input: &'static str, expected: &str) {
+        let actual = write_to_string(input.as_bytes(), 1.0, 1.0, None, RenderMode::Block).unwrap();
         assert_eq!(expected, actual.trim());
     }
 }

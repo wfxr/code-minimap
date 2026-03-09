@@ -1,6 +1,6 @@
 # Print an optspec for argparse to handle cmd's options that are independent of any subcommand.
 function __fish_code_minimap_global_optspecs
-	string join \n H/horizontal-scale= V/vertical-scale= padding= encoding= version h/help
+	string join \n H/horizontal-scale= V/vertical-scale= padding= m/mode= encoding= version h/help
 end
 
 function __fish_code_minimap_needs_command
@@ -27,6 +27,8 @@ end
 complete -c code-minimap -n "__fish_code_minimap_needs_command" -s H -l horizontal-scale -d 'Specify horizontal scale factor' -r
 complete -c code-minimap -n "__fish_code_minimap_needs_command" -s V -l vertical-scale -d 'Specify vertical scale factor' -r
 complete -c code-minimap -n "__fish_code_minimap_needs_command" -l padding -d 'Specify padding width' -r
+complete -c code-minimap -n "__fish_code_minimap_needs_command" -s m -l mode -d 'Specify render mode' -r -f -a "braille\t''
+block\t''"
 complete -c code-minimap -n "__fish_code_minimap_needs_command" -l encoding -d 'Specify input encoding' -r -f -a "utf8-lossy\t''
 utf8\t''"
 complete -c code-minimap -n "__fish_code_minimap_needs_command" -l version -d 'Print version'

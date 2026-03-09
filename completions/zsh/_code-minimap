@@ -20,6 +20,8 @@ _code-minimap() {
 '-V+[Specify vertical scale factor]:VSCALE:_default' \
 '--vertical-scale=[Specify vertical scale factor]:VSCALE:_default' \
 '--padding=[Specify padding width]:PADDING:_default' \
+'-m+[Specify render mode]:MODE:(braille block)' \
+'--mode=[Specify render mode]:MODE:(braille block)' \
 '--encoding=[Specify input encoding]:ENCODING:(utf8-lossy utf8)' \
 '--version[Print version]' \
 '-h[Print help]' \

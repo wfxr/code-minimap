@@ -35,7 +35,7 @@ _code-minimap() {
 
     case "${cmd}" in
         code__minimap)
-            opts="-H -V -h --horizontal-scale --vertical-scale --padding --encoding --version --help [FILE] completion help"
+            opts="-H -V -m -h --horizontal-scale --vertical-scale --padding --mode --encoding --version --help [FILE] completion help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -59,6 +59,14 @@ _code-minimap() {
                     ;;
                 --padding)
                     COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --mode)
+                    COMPREPLY=($(compgen -W "braille block" -- "${cur}"))
+                    return 0
+                    ;;
+                -m)
+                    COMPREPLY=($(compgen -W "braille block" -- "${cur}"))
                     return 0
                     ;;
                 --encoding)
